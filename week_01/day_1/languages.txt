@@ -1,5 +1,5 @@
-R
-Python
-SQL
-JavaScript
 Java
+JavaScript
+Python
+R
+SQL
