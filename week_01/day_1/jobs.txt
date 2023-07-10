@@ -1,4 +1,4 @@
-Data Engineer
-Data Analyst
-Data Scientist
 Business Analyst
+Data Analyst
+Data Engineer
+Data Scientist
