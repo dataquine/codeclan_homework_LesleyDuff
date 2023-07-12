@@ -1,0 +1,173 @@
+# File: homework_week_01_day_02.Rmd
+# Week: 01
+# Day: 02
+# Author: Lesley Duff
+# Date: 2023-07-11
+---
+title: "Dplyr Homework"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Week 1, Day 2, Starbucks Calorie dataset
+
+## Question 1.
+
+Load in the dataset and have a look at it. What are the dimensions, variable types, variable names, etc.?
+
+```{r}
+# Load data
+library(tidyverse)
+library(CodeClanData)
+library(skimr)
+
+# Examine Drinks dataset
+drinks_content
+glimpse(drinks_content)
+```
+### Dimensions
+```{r}
+dim(drinks_content)
+```
+
+Starbucks Calorie dataset has 242 observations and 18 variables.
+
+### Variable types
+```{r}
+skim(drinks_content)
+```
+Half the variables are of type character, the other half numeric.
+
+### Variable names
+```{r}
+names(drinks_content)
+```
+
+## Question 2.
+
+Let’s first investigate the calories of different drinks. Select the variables Beverage_category, Beverage, Beverage prep and Calories from your data. Since we are interested in the calorie content, check if there are any NA values in the data, and drop them if there are.
+
+```{r}
+drinks_content %>% 
+  # select Beverage_category, Beverage, Beverage prep and Calories 
+  select(., Beverage_category, Beverage, Beverage_prep, Calories) %>% 
+  filter(!is.na(Beverage_category), 
+         !is.na(Beverage), 
+         !is.na(Beverage_prep), 
+         !is.na(Calories))
+```
+
+## Question 3
+
+Create a new variable (column) called calorie_diff, which stores the difference between 135 calories (135 calories = 10 cubes of sugar!) and the calories in each drink. (hint: you’ll want to subtract 135 from the calories to see which drink have more or less than 10 cups of sugar).
+
+```{r}
+drinks_content %>% 
+  mutate(calorie_diff = Calories - 135)
+```
+
+## Question 4.
+
+Summarise the mean number of calories in each beverage_category. Which 3 category of drinks have the most calories? Which 3 drinks have the least? Write a small summary of your findings.
+```{r}
+drinks_content %>% 
+  group_by(Beverage_category)  %>% 
+  summarise(n_mean_calories = mean(Calories, na.rm = TRUE)) 
+```
+
+The next two results are assuming that the 'most' and 'least' calories 
+are based on the mean rather than the absolute total number of calories for a 
+category.
+
+```{r}
+drinks_content %>% 
+  group_by(Beverage_category)  %>% 
+  summarise(average_calories = mean(Calories, na.rm = TRUE)) %>% 
+  arrange(desc(average_calories)) %>% 
+  head(3)
+```
+
+Three categories of drink with the most calories are
+
+1. Smoothies
+2. Frappuccino® Blended Coffee
+3. Signature Espresso Drinks
+
+```{r}
+drinks_content %>% 
+  group_by(Beverage_category)  %>% 
+  summarise(average_calories = mean(Calories, na.rm = TRUE)) %>% 
+  arrange(desc(average_calories)) %>% 
+  tail(3)
+```
+The 3 drinks with the least calories are
+
+1. Classic Espresso Drinks
+2. Shaken Iced Beverages
+3. Coffee
+
+## Question 5.
+
+Let’s look at this a different way. What is the average number of calories in each Beverage_prep type?
+
+```{r}
+drinks_content %>% 
+  group_by(Beverage_prep)  %>% 
+  summarise(average_calories = mean(Calories, na.rm = TRUE)) %>% 
+  arrange(desc(average_calories))
+```
+
+# Question 6
+
+Which Beverage_prep type contains more than the average calories of all drinks?
+Hint
+: to answer this, you’ll have to first figure out what the average calories across all drinks are, and then use that as a filter for the grouped Beverage_prep data.
+```{r}
+average_calories <- drinks_content %>%
+  summarise(average_value = mean(Calories, na.rm = TRUE)) %>% 
+  pull()
+
+drinks_content %>% 
+  # group the drinks data by Beverage_prep
+  group_by(Beverage_prep) %>% 
+  # only show observations with > average_calories
+  filter(Calories > average_calories) %>%
+  
+  # count how many per Beverage_prep have > average_calories
+  summarise(count = n()) %>% 
+ # Arrange so the highest values come first.
+  arrange(desc(count))
+```
+
+The Beverage_prep containing more than the average calories of all drinks.
+Soymilk would appear to be the worst for calories.
+
+1. Soymilk
+2. 2% Milk
+3. Grande Nonfat Milk
+4. Venti Nonfat Milk
+5. Whole Milk
+6. Tall Nonfat Milk
+7. Grande
+8. Tall Nonfat Milk
+9. Grande
+10. Tall
+
+## Question 7.
+
+Which is the best type of coffee drink (and by ‘drink’ we mean the combination of Beverage_category, Beverage and Beverage_prep) to get if you’re worried about consuming too many calories?
+
+```{r}
+least_calories <- drinks_content %>%
+  summarise(least_value = min(Calories, na.rm = TRUE)) %>% 
+  pull()
+
+drinks_content %>%
+  select(Calories, Beverage_category, Beverage, Beverage_prep) %>% 
+  filter(Calories == least_calories) %>% 
+  arrange(Beverage_category, Beverage, Beverage_prep)
+```
+
+The best type of coffee drink is Tazo® Tea Drinks, Tazo® Tea in 
+Grande/Short/Tall/Venti Beverage_prep.
