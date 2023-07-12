@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Lesley Duff" />
 
 
 <title>Dplyr Homework</title>
@@ -1620,17 +1621,21 @@ display: none;
 
 
 <h1 class="title toc-ignore">Dplyr Homework</h1>
+<h4 class="author">Lesley Duff</h4>
 
 </div>
 
 
-<div id="week-1-day-2-starbucks-calorie-dataset" class="section level1">
-<h1>Week 1, Day 2, Starbucks Calorie dataset</h1>
+<!-- 
+# File: homework_week_01_day_02.Rmd
+# Week 1, Day 2, Starbucks Calorie dataset
+-->
 <div id="question-1." class="section level2">
 <h2>Question 1.</h2>
 <p>Load in the dataset and have a look at it. What are the dimensions,
 variable types, variable names, etc.?</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code># Load data
+library(tidyverse)</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.2     ✔ readr     2.1.4
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
@@ -1654,6 +1659,7 @@ variable types, variable names, etc.?</p>
 ##     population</code></pre>
 <pre class="r"><code>library(skimr)
 
+# Examine Drinks dataset
 drinks_content</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -2111,7 +2117,6 @@ calories in each Beverage_prep type?</p>
   </script>
 </div>
 </div>
-</div>
 <div id="question-6" class="section level1">
 <h1>Question 6</h1>
 <p>Which Beverage_prep type contains more than the average calories of
@@ -2137,6 +2142,20 @@ drinks_content %&gt;%
 {"columns":[{"label":["Beverage_prep"],"name":[1],"type":["chr"],"align":["left"]},{"label":["count"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Soymilk","2":"33"},{"1":"2% Milk","2":"26"},{"1":"Grande Nonfat Milk","2":"16"},{"1":"Venti Nonfat Milk","2":"15"},{"1":"Whole Milk","2":"14"},{"1":"Tall Nonfat Milk","2":"3"},{"1":"Grande","2":"1"},{"1":"Tall","2":"1"},{"1":"Venti","2":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
+<p>The Beverage_prep containing more than the average calories of all
+drinks. Soymilk would appear to be the worst for calories.</p>
+<ol style="list-style-type: decimal">
+<li>Soymilk</li>
+<li>2% Milk</li>
+<li>Grande Nonfat Milk</li>
+<li>Venti Nonfat Milk</li>
+<li>Whole Milk</li>
+<li>Tall Nonfat Milk</li>
+<li>Grande</li>
+<li>Tall Nonfat Milk</li>
+<li>Grande</li>
+<li>Tall</li>
+</ol>
 <div id="question-7." class="section level2">
 <h2>Question 7.</h2>
 <p>Which is the best type of coffee drink (and by ‘drink’ we mean the

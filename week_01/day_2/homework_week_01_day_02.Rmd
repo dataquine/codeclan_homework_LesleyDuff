@@ -1,16 +1,18 @@
-# File: homework_week_01_day_02.Rmd
-# Week: 01
-# Day: 02
-# Author: Lesley Duff
-# Date: 2023-07-11
 ---
 title: "Dplyr Homework"
 output:
   html_document:
     df_print: paged
+    
+author: Lesley Duff
+params:
+  start_date: '2023-07-11'
+  end_date: '2023-07-11'
 ---
-
+<!-- 
+# File: homework_week_01_day_02.Rmd
 # Week 1, Day 2, Starbucks Calorie dataset
+-->
 
 ## Question 1.
 
