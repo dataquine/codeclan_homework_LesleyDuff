@@ -1,0 +1,157 @@
+---
+title: "Cleaning & Extra dplyr Homework"
+author: "Lesley Duff"
+output:
+  html_document:
+    df_print: paged
+params:
+  start_date: "2023-07-12"
+  end_date: "2023-07-12"
+---
+<!-- 
+# File: homework_week_01_day_03.Rmd
+# Week 1, Day 3, a dataset about movies from Kaggle
+# https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata
+# Metadata on ~5,000 movies from TMDb
+-->
+
+## Question 1.
+
+After you’ve read in the data and assigned it to a variable with a useful name, investigate it. Write down some ideas for what you could do to further investigate/clean this data using what you’ve learned today (no need to code it though, just jot down thoughts and ideas). Feel free to also write down any general thoughts you get looking at the data - this task is just to get you thinking about data and data cleaning/prepping.
+
+```{r}
+library(tidyverse)
+
+# load in the movies data, and remove the metadata 
+movies <- read_csv("data/movies.csv")
+
+movies
+```
+Thoughts: 
+
+- URL to the Kaggle web page indicates that this data is
+"Metadata on ~5,000 movies from TMDb". Kaggle had to remove the original dataset from DMCA takedown request from IMDB so this is a modied version from TMB
+https://www.themoviedb.org/ the terms of use are https://www.themoviedb.org/documentation/api/terms-of-use would be sensible to
+check that what we are doing is within those terms before proceeding.
+"All fields are filled out by users so don't expect them to agree on keywords", genres, ratings, or the like.
+- bigger dataset, more rows than previous CodeClan work.
+- homepage - lots of NAs in homepage column, look like URLs. Web developer 
+comment: these start with 'http', indicates old data from a few years ago as most sites have switched to using the more secure 'https' prefix
+- budget - change to more friendly number version of money like the revenue column. Not clear yet whether values are in pounds or dollars would expect dollars in this context.
+- original_language - expand language code to full language e.g. en -> English
+- popularity - is a number, what does that represent, if it's a scale whats the expected range of values possible are values within the range?
+- release_date date format appears to be UK 26/10/2015 month day year.
+runtime - what time units is this, looks like minutes
+vote_average and vote_count - suggests this data is based on user supplied values
+
+First would check the types of the columns
+
+## Question 2.
+
+A lot of interesting stuff in there! But for now, we are only interested in the movies’ titles, their runtime as well as their budget. Select the three columns that contain this information and save them into a new variable called movies_selected. Hint: you will have to make a choice between original_title and title.
+
+```{r}
+movies_selected <- movies %>% 
+  # we select the title rather than original title as original_title appears
+  # To be the name in languages other than English
+  select(title, runtime, budget)
+
+movies_selected
+```
+
+## Question 3.
+
+Ok, now take your subsetted data movies_selected, and count the number of missing values in each column.
+
+```{r}
+names(movies_selected)
+
+movies_selected %>% 
+  summarise(count_title = sum(is.na(title)),
+            count_runtime = sum(is.na(runtime)),
+            count_budget = sum(is.na(budget)))
+
+```
+
+## Question 4.
+
+There’s not too many NAs, but there are actually quite a few movies with a runtime of 0 in this dataset. Since it’s impossible for a movie to have a runtime of 0, use the function na_if to convert runtimes of length 0 into NAs. Save this into a new object called movies_runtime. Then count how many missing values there are now in the column runtime.
+
+```{r}
+# check how many NA entries before
+movies_selected %>% 
+  summarise(count_na_runtime = sum(is.na(runtime)))
+
+movies_runtime <- movies_selected %>% 
+  # Use na_if to convert runtimes of length 0 into NAs.
+  mutate(runtime = na_if(runtime, 0))
+
+# check how many NA entries after mutation
+movies_runtime %>% 
+  summarise(count_na_runtime = sum(is.na(runtime)))
+```
+There are now 37 NAs in the runtime column.
+
+## Question 5.
+
+Impute the missing values in runtime with the median runtime using coalesce and save this into a new object called movies_imputed. There should now be no missing values in the column runtime - check this to make sure.
+
+```{r}
+movies_imputed <- movies_runtime %>% 
+    mutate(runtime = coalesce(runtime, median(runtime, na.rm = TRUE)))
+
+# check for NA in runtime column, expecting 0
+movies_imputed %>% 
+  summarise(count_na_runtime = sum(is.na(runtime)))
+
+movies_imputed
+```
+
+## Question 6.
+
+Finally, use the slice_min and slice_max functions on movies_imputed to get the movies with the 10 shortest and 10 longest runtimes.
+
+Use slice_min and slice_max - unfamiliar with these will lookup help
+Found intro in 5_flipped_even_more_dplyr/even_more_dplyr.html
+
+```{r}
+ten_shortest_runtimes <- movies_imputed %>% 
+  # 10 shortest runtimes
+  slice_min(runtime, n = 10) %>%
+  
+  # Prefer to see these in ascending order of runtime to see minimum
+  arrange(runtime)
+
+ten_shortest_runtimes
+
+ten_longest_runtimes <- movies_imputed %>% 
+  # 10 longest runtimes
+  slice_max(runtime, n = 10) %>%
+  
+  # Prefer to see these in descending order of runtime to see max
+  arrange(desc(runtime))
+
+ten_longest_runtimes
+  
+```
+## Question 7.
+
+Using the if_else function, impute anything with a budget below $100 with the median budget. Overwrite your movies_imputed so it contains the new budget values.
+```{r}
+
+movies_imputed <- movies_imputed %>%
+  # I originally worked with the selected data but commented out as
+  # we are ultimately assigning the new values and need all columns
+  #select(budget) %>% 
+
+  mutate(
+  # Impute anything with a budget below $100 with the median budget
+    budget = if_else(budget < 100,
+                     median(budget),
+                     budget)
+  )
+
+movies_imputed
+```
+
+
