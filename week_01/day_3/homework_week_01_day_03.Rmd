@@ -132,7 +132,7 @@ ten_longest_runtimes <- movies_imputed %>%
   arrange(desc(runtime))
 
 ten_longest_runtimes
-  
+
 ```
 ## Question 7.
 
