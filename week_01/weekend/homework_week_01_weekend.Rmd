@@ -1,0 +1,273 @@
+---
+title: "Week 01, Weekend Homework"
+subtitle: "Goodreads (a website all about books)"
+output:
+  html_document:
+    toc: true
+   # toc_float: true
+    number_sections: true
+    df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
+---
+# First steps
+
+Load necessary packages and read in books.csv. Investigate dimensions, 
+variables, missing values - you know the drill!
+
+```{r}
+# install.packages("skimr")
+
+library(janitor)
+library(skimr)
+library(tidyverse)
+
+# ?read_csv
+books <- read_csv("data/books.csv",
+  # Read American date format and convert publication_date to Date type
+  col_types = cols("publication_date" = col_date("%m/%d/%Y"))
+)
+
+# overall dimensions
+dim(books)
+
+# variable names
+names(books)
+
+# missing values
+# total number of missing values in dataset
+sum(is.na(books))
+
+# how many rows are lost if you drop NAs
+nrow(books) - nrow(drop_na(books))
+# Only 4 rows
+
+# Which columns with NAs?
+books %>%
+  summarise(across(.cols = everything(), .fns = ~ sum(is.na(.x))))
+
+# We found columns average_rating and num_pages have NAs
+
+# Which rows with NAs?
+books %>%
+  filter(is.na(average_rating), is.na(num_pages))
+```
+
+# Up to you
+
+Now it’s up to you… For this weekend homework there will be no specific tasks, 
+just you and this dataset! Using everything you’ve learned this week, try to 
+describe/summarise at least 5 things about this dataset - using R and the 
+tidyverse of course! Feel free to find and use new functions if there is 
+something that the tidyverse doesn’t offer, but do try to use this homework to 
+apply what you have learned this week. Be prepared to share one of your findings 
+on Monday!
+
+Before you submit, go through your weekend homework and make sure your code is 
+following best practices as laid out in the coding_best_practice lesson.
+
+## Examine data samples
+
+```{r}
+# Check first n rows
+head(books, 10)
+
+# Check last n rows
+tail(books, 10)
+
+# get an overview of the data
+glimpse(books)
+
+# look at the actual data in table format
+view(books)
+
+# Column types
+spec(books)
+# N.B. the first time running this the type was 'chr' so I went back to
+# read_csv to specify that the type should be col_date and that we were
+# reading American date format col_types "%m/%d/%Y"
+
+# Summary
+skim(books)
+```
+## Parsing errors
+
+One thing that caught me eye was the there was a warning for parser issues.
+So will try and find out what technical issues there are.
+There's a new to me function `problems()`
+
+```{r}
+# ?problems()
+
+problems(books)
+```
+
+### Problem with vroom package (lost a lot of time here!)
+
+Now here I went down a bit of a rabbit hole distracted by the vroom package
+Initially I interpreted the `problems()` output as meaning I *had* to run vroom.
+I initially installed vroom...then realised that wasn't necessary. Tried to 
+uninstall vroom via remove and rerun code but ran into an error message.
+
+For the record it was the following that caused the original mayhem
+```{r eval = FALSE}
+install.packages("vroom")
+library(vroom)
+
+# realised I didn't need vroom
+remove.packages("vroom")
+```
+
+Error message after remove and re running
+
+```{r eval = FALSE}
+books <- read_csv("data/books.csv")
+```
+Error in loadNamespace(x) : there is no package called ‘vroom’
+
+I even got this same message if I prefixed `readr::read_csv`. (!)
+Could not understand why vroom was coming up when the prefix was another package
+
+Tried Googling uninstalling packages but looked like remove *should* have 
+worked. So I'm assuming there's something cached somewhere. Things I tried
+with success or fail.
+
+* "Restart R and run all chunks", FAIL 
+* Session Clear workspace, FAIL
+* Quit and restart R studio, FAIL
+* On mac try logging out and in to my account again, FAIL
+* Uninstalled programmatically installed package manually by clicking remove, 
+FAIL
+* Reinstall tidyverse/readr, SUCCESS
+
+Not sure of the *precise* step that I did that cured it but I did at one point 
+I tried removing tidyverse or possibly just readr package(s) and then 
+reinstalled it. Shortly after doing something like that the vroom messages went 
+away. I'm really expecting that I shouldn't have had to do this so would like to 
+know what the correct thing to do was.
+
+Back to the show...
+
+## Cleaning
+
+The first variable names isn't in snake_case i.e. bookID.
+4 records have problems. As this is such a small portion of 11127 rows I will
+drop them. Feel bad about this as I suspect there's an issue with commas inside
+an author name that could possibly be resolved. Due to lack of time I'm unable 
+to investigate how to resolve this properly but my thoughts were that there 
+would be something to modify the 
+`read_csv()`?
+
+e.g. First error listed in problems is in expecting a double but instead getting	
+"Jr./Sam B. Warner". Those should be in the author column instead. 
+
+```{r}
+books_subset <- books %>%
+  clean_names() %>% # Lets try janitor to clean up the first column name
+  drop_na() # Only 4 records will be dropped
+
+names(books_subset)
+count(books_subset)
+head(books_subset)
+
+# The first time through this revealed that the publication_date variable was
+# chr. After modifying read_csv at start publication_date should now show
+# as col_date
+str(books_subset)
+```
+
+Now no problems in books_subset after cleaning so we will use this for all  
+following analysis. 
+
+## Top 10 authors by how many books
+
+```{r}
+books_subset %>%
+  group_by(authors) %>%
+  summarise(count_books = n()) %>%
+  arrange(desc(count_books)) %>%
+  head(10)
+```
+
+## Top 10 popular primary language of the book
+
+```{r}
+books_subset %>%
+  group_by(language_code) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(10)
+```
+
+## Top 10 books with highest number of ratings
+
+```{r}
+books_subset %>%
+  select(title, ratings_count) %>%
+  slice_max(ratings_count, n = 10)
+```
+
+## Which book has been reviewed the most number of times?
+
+```{r}
+books_subset %>%
+  select(title, text_reviews_count) %>%
+  arrange(desc(text_reviews_count)) %>%
+  head(1)
+```
+
+## How many books without a written text review?
+
+```{r}
+books_subset %>%
+  filter(text_reviews_count == 0) %>%
+  summarise(count_no_reviews = n())
+```
+## Highest average_rating books
+
+```{r}
+books_subset %>%
+  select(title, average_rating) %>%
+  slice_max(average_rating, n = 10) %>%
+  arrange(title)
+```
+
+## Mean and median of average_rating of books
+
+```{r}
+books_subset %>%
+  select(title, average_rating) %>%
+  summarise(
+    mean_avg_rating = mean(average_rating),
+    median_avg_rating = median(average_rating)
+  )
+```
+
+## Oldest published_date of book?
+
+```{r}
+books_subset %>%
+  select(publication_date) %>%
+  slice_min(publication_date, n = 1) %>%
+  pull()
+```
+
+## Unique publisher names
+
+```{r}
+books_subset %>%
+  distinct(publisher) %>%
+  arrange(publisher)
+```
+
+## Books with the longest number of pages
+ 
+```{r}
+books_subset %>%
+  select(title, num_pages) %>%
+  arrange(desc(num_pages)) %>%
+  head(10)
+```
+
+
+
