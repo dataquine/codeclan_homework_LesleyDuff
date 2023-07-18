@@ -1,5 +1,5 @@
 ---
-title: "Week 01, Day 01 Homework"
+title: "Week 02, Day 01 Homework"
 subtitle: "Credit card information and transactions"
 output:
   html_document:
