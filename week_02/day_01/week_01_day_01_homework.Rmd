@@ -1,0 +1,261 @@
+---
+title: "Week 01, Day 01 Homework"
+subtitle: "Credit card information and transactions"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
+---
+# MVP
+
+The data for the joining tasks is from [Kaggle](https://www.kaggle.com/ananta/credit-card-data) and contains synthetic (fake) credit card information and transactions. The data for the tidyr tasks is also synthetic.
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+## Joins
+
+### Question 1
+
+Read in all 4 credit card transaction datasets and clean column names.
+
+```{r}
+cards <- read_csv("data/CardBase.csv")
+customers <- read_csv("data/CustomerBase.csv")
+fraud <- read_csv("data/FraudBase.csv")
+transactions <- read_csv("data/TransactionBase.csv")
+```
+
+```{r}
+cards <- cards %>%
+  clean_names()
+
+names(cards)
+
+customers <- customers %>%
+  clean_names()
+
+names(customers)
+
+# Not strictly speaking necessary for fraud right now but doing in case data 
+# names are added to in future
+fraud <- fraud %>%
+  clean_names()
+
+names(fraud)
+
+transactions <- transactions %>%
+  clean_names()
+
+names(transactions)
+```
+
+### Question 2
+
+Join the data containing card details and customer details by customer id, so 
+that all records of card details and any matching records in customer details 
+are kept. Before you run the code, think about how many rows you expect to see 
+after joining.
+
+```{r}
+# cards: primary key: card_number, foreign key: cust_id
+# customers: primary key: cust_id, foreign key: none
+dim(cards)
+dim(customers)
+
+# Inner join will return all records in two tables that match on some condition.
+# all records of card details and any matching records in customer details
+# expecting rows = row count of cards
+
+cards_customers <- inner_join(cards, customers, "cust_id")
+
+dim(cards_customers) # rows here = rows in cards
+
+cards_customers
+```
+
+### Question 3
+
+Join the data containing fraud details with transaction details so all rows of 
+both tables are kept. What does the resulting row number tell you?
+
+```{r}
+# fraud: primary key: transaction_id
+# transactions: primary key
+# Expecting rows to match rows of largest table
+
+dim(fraud)
+dim(transactions) # This table has more rows than fraud
+
+# join fraud details with transaction details so all rows of both tables are
+# kept
+fraud_transactions <- full_join(fraud, transactions, "transaction_id")
+
+dim(fraud_transactions) # this should equal transactions with most rows
+
+fraud_transactions
+```
+Row number of `fraud_transactions` equals row number of the `transactions` 
+table.
+
+### Question 4 
+
+Perform a filtering join between `cards` and `transactions` so that only the 
+card details for cards that have made at least one transaction are preserved.
+
+```{r}
+dim(cards)
+dim(transactions)
+
+# ?semi_join
+# returns rows from the cards table which have matching ones in the transactions
+cards_transactions_has_transactions <- semi_join(cards, transactions,
+  by = c("card_number" = "credit_card_id")
+)
+
+cards_transactions_has_transactions
+
+dim(cards_transactions_has_transactions) # rows equals rows of cards
+
+# just checking unique credit_card_id
+# transactions %>%
+#  distinct(credit_card_id)
+#  row also equals rows of cards
+```
+
+## tidyr
+
+### Question 5
+
+Read in hat_observations and separate observation into two columns, `hat_colour` 
+and `hat_type`.
+
+```{r}
+hat_observations <- read_csv("data/hat_observations.csv")
+
+head(hat_observations)
+
+# Add new columns of hat_colour and hat_type.
+tidy_hat_observations <- hat_observations %>%
+  separate(observation, c("hat_colour", "hat_type"), sep = ",")
+
+head(tidy_hat_observations)
+```
+
+### Question 6
+
+Unite `day`, `month`, and `year` columns into a column called `date` using a 
+suitable separator. Then find the date where the most berets were observed.
+
+```{r}
+tidy_hat_observations_unite <- tidy_hat_observations %>%
+  unite(date, c("year", "month", "day"), sep = "-") %>%
+  mutate(date = as.Date(date)) %>%
+  arrange(date)
+
+head(tidy_hat_observations_unite)
+
+tidy_hat_observations_unite %>%
+  slice_max(observation_count, n = 1)
+```
+
+# Extension
+
+## Joins
+
+### Question 1
+
+Can you join all 4 datasets together so that you’re left with a dataset that 
+looks like below with 109 rows and 12 columns?
+
+List of column names we have available:
+
+  `cards`: "card_number"  "card_family"  "credit_limit" "cust_id"
+  
+  `customers`: "cust_id" "age" "customer_segment" "customer_vintage_group"
+ 
+  `fraud`: "transaction_id" "fraud_flag"
+  
+  `transactions`: "transaction_id" "transaction_date" "credit_card_id"
+    "transaction_value" "transaction_segment"
+
+We want the following columns in this order:
+
+* "card_number"  
+* "card_family"  
+* "credit_limit" 
+* "cust_id" 
+* "age" 
+* "customer_segment" 
+* "customer_vintage_group" 
+* "transaction_id" 
+* "transaction_date" 
+* "transaction_value"
+* "transaction_segment" 
+* "fraud_flag"
+  
+This is combining all tables with   
+`cards` + `customers` + `transactions` + `fraud`
+
+```{r}
+# inner_join on all foreign keys
+cards_customers_transactions_fraud <- cards %>%
+  inner_join(customers, cust_id, by = "cust_id") %>%
+  inner_join(transactions, card_number,
+    by = c("card_number" = "credit_card_id")
+  ) %>%
+  inner_join(fraud, transaction_id, by = "transaction_id")
+
+cards_customers_transactions_fraud
+```
+
+## tidyr
+
+### Question 2
+
+Read in `exam_scores` and transform it into long format with two new columns 
+`exam_question` and `score`. Then, using separate and select, remove superfluous
+information from the values in `exam_question`
+
+```{r}
+exam_scores <- read_csv("data/exam_scores.csv")
+
+spec(exam_scores)
+head(exam_scores)
+
+#  transform it into long format with two new columns exam_question and score
+tidy_exam_scores <- exam_scores %>%
+  pivot_longer(
+    cols = c(
+      "exam_Q1", "exam_Q2", "exam_Q3", "exam_Q4", "exam_Q5",
+      "exam_Q6", "exam_Q7", "exam_Q8", "exam_Q9", "exam_Q10"
+    ),
+    names_to = "exam_question",
+    values_to = "score"
+  )
+
+head(tidy_exam_scores)
+
+# Then, using separate and select, remove superfluous information from the
+# values in exam_question
+
+# suggest removing prefix exam_Q to leave the digits
+tidy_exam_scores <- tidy_exam_scores %>%
+  separate(exam_question, c("exam", "question"), sep = "exam_Q") %>%
+  
+  # remove redundant exam column
+  select(-exam) %>%
+  
+  # take the opportunity to convert question to numbers for any future functions
+  # e.g. sorting by question number e.g. 1 and 10 would be next to each other
+  # when it's a chr
+  mutate(question = as.numeric(question)) %>%
+  arrange(question)
+
+tidy_exam_scores
+```
