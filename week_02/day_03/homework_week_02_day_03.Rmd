@@ -101,6 +101,8 @@ matrix_fourteen_day_forecast_temperature <- matrix(
 # Fill in values manually from webpage with 14 day forecast for temperatures
 
 # I'm sure there must be a more compact way of doing this
+# brain freeze can't remember syntax. I'm assuming there'll
+# be a simple way of initialising a row
 matrix_fourteen_day_forecast_temperature[1, 1] <- 13
 matrix_fourteen_day_forecast_temperature[1, 2] <- 14
 matrix_fourteen_day_forecast_temperature[1, 3] <- 16
