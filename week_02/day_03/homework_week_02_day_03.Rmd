@@ -1,0 +1,360 @@
+---
+title: "Week 02, Day 03 Homework"
+subtitle: "Programming in R Homework"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+#    number_sections: true
+    df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
+---
+
+# MVP
+
+<br> 
+
+**Question 1.** \
+Find the weather forecast for the next three days online. Create a list of lists in which each inner list should be labelled with the name of the day of the week. Each inner list should contain named elements telling you the temperature, chance of rain and wind speed.
+
+```{r}
+# Research: Find the weather forecast for the next three days online
+
+# https://www.theweathernetwork.com/uk/14-day-weather-trend/south-western-scotland/glasgow
+# Assumptions:
+#   temperature:  daytime maximum in degrees centigrade °
+#   chance of rain/precipitation: in percent %
+#   wind speed: km/h without the direction
+#
+# Thursday 20/07/2023: temperature =  17, chance of rain = 40, wind_speed = 22
+# Friday 21/07/2023: temperature =  16, chance of rain = 90, wind_speed = 19
+# Saturday 22/07/2023: temperature =  17, chance of rain = 90, wind_speed = 17
+
+# Create a list of lists in which each inner list should be labelled with the name of the day of the week.
+
+weather_glasgow_list <- list(
+  "Thursday" = list(temperature = 17, chance_of_rain = 40, wind_speed = 22),
+  "Friday" = list(temperature = 16, chance_of_rain = 90, wind_speed = 19),
+  "Saturday" = list(temperature = 17, chance_of_rain = 90, wind_speed = 17)
+)
+
+weather_glasgow_list
+```
+
+
+
+<br>
+
+**Question 2.** \
+Using the list you've just made find:
+
+  i. The chance of rain tomorrow
+  ii. The wind speed on the day after tomorrow
+  iii. The temperature tomorrow.
+
+```{r}
+day_tomorrow <- "Thursday"
+day_after_tomorrow <- "Friday"
+
+label_chance_of_rain <- "chance_of_rain"
+label_windspeed <- "wind_speed"
+label_tempature <- "temperature"
+
+units_chance_of_rain <- "%"
+units_windspeed <- "km/h"
+units_temperature <- "°"
+
+# The chance of rain tomorrow
+chance_of_rain_tomorrow <- weather_glasgow_list[[day_tomorrow]][[label_chance_of_rain]]
+print(paste0("The chance of rain tomorrow: ", chance_of_rain_tomorrow, units_chance_of_rain))
+
+# The wind speed on the day after tomorrow
+wind_speed_day_after_tomorrow <- weather_glasgow_list[[day_after_tomorrow]][[label_windspeed]]
+print(paste0("The wind speed on the day after tomorrow: ", wind_speed_day_after_tomorrow, units_windspeed))
+
+# The temperature tomorrow.
+temperature_tomorrow <- weather_glasgow_list[[day_tomorrow]][[label_tempature]]
+print(paste0("The temperature tomorrow: ", temperature_tomorrow, units_temperature))
+```
+
+
+<br>
+
+**Question 3.** \
+Find a 14 day forecast online and create a matrix of the forecasts for 
+temperature, where each week is one row and columns correspond to days.
+
+You will want to give a name to the matrix you create.
+
+```{r}
+# Assumptions: I'm using the same data source as for question 1
+
+# create a matrix of the forecasts for temperature, where each week is one row
+# and columns correspond to days.
+# matrix will have 2 rows of 7 columns initially NAs
+matrix_fourteen_day_forecast_temperature <- matrix(
+  data = NA, nrow = 2,
+  ncol = 7
+)
+
+# Fill in values manually from webpage with 14 day forecast for temperatures
+
+# I'm sure there must be a more compact way of doing this
+matrix_fourteen_day_forecast_temperature[1, 1] <- 13
+matrix_fourteen_day_forecast_temperature[1, 2] <- 14
+matrix_fourteen_day_forecast_temperature[1, 3] <- 16
+matrix_fourteen_day_forecast_temperature[1, 4] <- 15
+matrix_fourteen_day_forecast_temperature[1, 5] <- 14
+matrix_fourteen_day_forecast_temperature[1, 6] <- 14
+matrix_fourteen_day_forecast_temperature[1, 7] <- 15
+matrix_fourteen_day_forecast_temperature[2, 1] <- 17
+matrix_fourteen_day_forecast_temperature[2, 2] <- 17
+matrix_fourteen_day_forecast_temperature[2, 3] <- 16
+matrix_fourteen_day_forecast_temperature[2, 4] <- 17
+matrix_fourteen_day_forecast_temperature[2, 5] <- 17
+matrix_fourteen_day_forecast_temperature[2, 6] <- 17
+matrix_fourteen_day_forecast_temperature[2, 7] <- 10
+
+matrix_fourteen_day_forecast_temperature
+```
+
+<br>
+
+**Question 4.** \
+From the matrix you just made select:
+
+  i. The third day of the second week
+  ii. The whole second week
+  iii. The first, third and fifth days in both weeks.
+
+```{r}
+# The third day of the second week
+third_day_second_week <- matrix_fourteen_day_forecast_temperature[2, 3]
+third_day_second_week
+
+# The whole second week
+whole_second_week <- matrix_fourteen_day_forecast_temperature[2, ]
+whole_second_week
+
+# The first, third and fifth days in both weeks.
+first_third_fifth_days_both_weeks <- matrix_fourteen_day_forecast_temperature[, c(1, 3, 5)]
+first_third_fifth_days_both_weeks
+```
+
+
+<br>
+
+**Question 5.** \
+Write a function that pre-appends "The answer is: " to any character input, 
+while for numeric input, it either just returns the number for numbers less than 10, or divides the number by 10 for numbers greater than 10. For anything else return "Invalid input".
+
+```{r}
+calculate_answer <- function(input) {
+  output <- "Invalid input"
+  character_preappend <- "The answer is:"
+
+  # print(class(input))
+
+  if (class(input) == "character") {
+    output <- paste0(character_preappend, input)
+  } else {
+    if (class(input) == "numeric") {
+      if (input < 10) {
+        output <- input
+      } else {
+        if (input > 10) {
+          output <- input / 10
+        }
+      }
+    }
+  }
+
+  return(output)
+}
+
+# test character input should be "The answer is:42"
+calculate_answer("42")
+
+# test numeric input numbers less than 10 - should be 5
+calculate_answer(5)
+
+# test numeric input numbers greater than 10 should be 2
+calculate_answer(20)
+
+# test numeric input numbers exactly 10 should be "Invalid input"
+calculate_answer(10)
+```
+
+<br>
+
+**Question 6.** \
+Write a function which checks if two vectors have the same elements. 
+
+* If they have the same elements in the same order, return "Exactly the same"
+* If they have the same elements but in a different order, return "The same"
+* If they don't have the same elements, return "Different".
+
+
+<details>
+<summary>**Hints**</summary>
+* You can check if two vectors have the same elements but in a different order 
+by using `sort` to sort each vector first and then checking if they are equal.
+* Have a look at the `all()` function
+</details>
+</blockquote>
+
+```{r}
+# checks if two vectors have the same elements
+check_vectors_same <- function(vector1, vector2) {
+  output <- ""
+  text_error_not_vector <- "Error not a vector"
+  text_same_order <- "Exactly the same"
+  text_different_order <- "The same"
+  text_not_same <- "Different"
+
+  if (is.vector(vector1)) {
+    if (is.vector(vector2)) {
+      # We've checked both arguments are vectors proceed to evaluate them
+
+      # If they have the same elements in the same order, return 
+      # "Exactly the same"
+      # ?identical
+      if (identical(vector1, vector2)) {
+        output <- text_same_order
+      } else {
+        # If they have the same elements but in a different order, return 
+        # "The same"
+        # You can check if two vectors have the same elements but in a different
+        # order by using sort to sort each vector first and then checking if 
+        # they are equal.
+        sort_vector1 <- sort(vector1)
+        sort_vector2 <- sort(vector2)
+
+        if (identical(sort_vector1, sort_vector2)) {
+          output <- text_different_order
+        } else {
+          # If they don’t have the same elements, return "Different".
+          output <- text_not_same
+        }
+      }
+    } else {
+      print(paste("vector1:", text_error_not_vector))
+    }
+  } else {
+    print(paste("vector2:", text_error_not_vector))
+  }
+
+  return(output)
+}
+
+# Checking error handling - should be empty and print error first argument
+check_vectors_same(data.frame(test1 = c("A", "B", "C")), 5)
+
+# Checking error handling - should be empty and print error second argument
+check_vectors_same(5, data.frame(test1 = c("A", "B", "C")))
+
+# not same: should be "Different"
+check_vectors_same(c(1, 2), c(1, 2, 4, 8, 16))
+
+# exactly same: should be "The same"
+check_vectors_same(c(1, 2), c(1, 2))
+
+#  same elements but in a different order: should be "Different"
+check_vectors_same(c(1, 2), c(2, 1))
+```
+
+
+
+# Extension
+
+<br>
+
+**Question 7.** \
+Write code that prints a multiplication table for numbers up to 12. i.e. there 
+will be 12 rows and 12 columns, and each element should be the row number multiplied by the column number.
+
+*From: https://adriann.github.io/programming_problems.html*
+
+```{r}
+# ?matrix
+matrix_mutiplication_table <- matrix(data = NA, nrow = 12, ncol = 12)
+matrix_mutiplication_table
+
+num_rows <- dim(matrix_mutiplication_table)[1]
+num_cols <- dim(matrix_mutiplication_table)[2]
+
+for (row_index in 1:num_rows) {
+  for (col_index in 1:num_cols) {
+    matrix_mutiplication_table[row_index, col_index] <- row_index * col_index
+    # print(paste("row", row_index, "col", col_index, matrix_mutiplication_table[row_index, col_index]) )
+  }
+}
+
+matrix_mutiplication_table
+```
+
+
+<br>
+
+**Question 8.** \
+Write a function that takes a vector, and creates a text art histogram, like the one below.
+
+You may want to use the function `cat()`. This is similar to `print()`, but prints directly, without vector markers. You can also include newlines `"\n"` when using `cat()`.
+
+For example, the vector
+`c(1, 2, 3, 4, 5, 1, 3, 4, 5, 1, 3, 4, 4, 3, 3, 3, 3)`
+should produce the histogram below - the histogram dislpays the number of times each number appears in the vector.
+
+```
+1 | ***
+2 | *
+3 | *******
+4 | ****
+5 | **
+```
+
+```{r}
+# I'm sure there's going to be an embarrassingly simple solution
+# Meanwhile here's a long version...
+
+# Print start of line number, default followed by " | "
+print_number_prefix <- function(number_prefix, str, char_histogram, sep = " | ") {
+  cat(str, (paste0(number_prefix, sep)), char_histogram)
+}
+
+# Output a text histogram
+create_histogram <- function(vector_text_art, char_histogram = "*") {
+  output <- ""
+
+  length_vector_text_art <- length(vector_text_art)
+  sort_text_art <- sort(vector_text_art)
+  previous_number <- NA
+
+  for (i in 1:length_vector_text_art) {
+    current_number <- sort_text_art[i]
+
+    # This is TRUE the first time through
+    if (is.na(previous_number)) {
+      print_number_prefix(current_number, output, char_histogram)
+    } else {
+      # We've found a new different number, move to a new line
+      if (current_number != previous_number) {
+        cat("\n")
+        print_number_prefix(current_number, output, char_histogram)
+      } else {
+        cat(output, char_histogram, sep = "")
+      }
+    }
+    previous_number <- current_number
+  }
+}
+
+vector_histogram <- c(1, 2, 3, 4, 5, 1, 3, 4, 5, 1, 3, 4, 4, 3, 3, 3, 3)
+
+create_histogram(vector_histogram)
+
+# example with different character
+create_histogram(vector_histogram, "#")
+
+```
