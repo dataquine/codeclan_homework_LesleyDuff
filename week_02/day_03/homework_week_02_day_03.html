@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lesley Duff" />
 
-<meta name="date" content="2023-07-19" />
+<meta name="date" content="2023-07-20" />
 
 <title>Week 02, Day 03 Homework</title>
 
@@ -2753,7 +2753,7 @@ border-radius: 0px;
 <h1 class="title toc-ignore">Week 02, Day 03 Homework</h1>
 <h3 class="subtitle">Programming in R Homework</h3>
 <h4 class="author">Lesley Duff</h4>
-<h4 class="date">2023-07-19</h4>
+<h4 class="date">2023-07-20</h4>
 
 </div>
 
@@ -2764,38 +2764,36 @@ border-radius: 0px;
 <p><strong>Question 1.</strong><br />
 Find the weather forecast for the next three days online. Create a list
 of lists in which each inner list should be labelled with the name of
-the day of the week. Each inner list should contain named elements
+the day of the week . Each inner list should contain named elements
 telling you the temperature, chance of rain and wind speed.</p>
 <pre class="r"><code># Research: Find the weather forecast for the next three days online
 
 # https://www.theweathernetwork.com/uk/14-day-weather-trend/south-western-scotland/glasgow
+
 # Assumptions:
 #   temperature:  daytime maximum in degrees centigrade °
 #   chance of rain/precipitation: in percent %
 #   wind speed: km/h without the direction
-#
-# Thursday 20/07/2023: temperature =  17, chance of rain = 40, wind_speed = 22
-# Friday 21/07/2023: temperature =  16, chance of rain = 90, wind_speed = 19
-# Saturday 22/07/2023: temperature =  17, chance of rain = 90, wind_speed = 17
 
-# Create a list of lists in which each inner list should be labelled with the name of the day of the week.
+# Create a list of lists in which each inner list should be labelled with the 
+# name of the day of the week.
 
 weather_glasgow_list &lt;- list(
-  &quot;Thursday&quot; = list(temperature = 17, chance_of_rain = 40, wind_speed = 22),
-  &quot;Friday&quot; = list(temperature = 16, chance_of_rain = 90, wind_speed = 19),
-  &quot;Saturday&quot; = list(temperature = 17, chance_of_rain = 90, wind_speed = 17)
+  &quot;Thursday&quot; = list(temperature = 18, chance_of_rain = 40, wind_speed = 23),
+  &quot;Friday&quot; = list(temperature = 16, chance_of_rain = 20, wind_speed = 19),
+  &quot;Saturday&quot; = list(temperature = 17, chance_of_rain = 90, wind_speed = 18)
 )
 
 weather_glasgow_list</code></pre>
 <pre><code>## $Thursday
 ## $Thursday$temperature
-## [1] 17
+## [1] 18
 ## 
 ## $Thursday$chance_of_rain
 ## [1] 40
 ## 
 ## $Thursday$wind_speed
-## [1] 22
+## [1] 23
 ## 
 ## 
 ## $Friday
@@ -2803,7 +2801,7 @@ weather_glasgow_list</code></pre>
 ## [1] 16
 ## 
 ## $Friday$chance_of_rain
-## [1] 90
+## [1] 20
 ## 
 ## $Friday$wind_speed
 ## [1] 19
@@ -2817,7 +2815,7 @@ weather_glasgow_list</code></pre>
 ## [1] 90
 ## 
 ## $Saturday$wind_speed
-## [1] 17</code></pre>
+## [1] 18</code></pre>
 <p><br></p>
 <p><strong>Question 2.</strong><br />
 Using the list you’ve just made find:</p>
@@ -2838,17 +2836,22 @@ units_windspeed &lt;- &quot;km/h&quot;
 units_temperature &lt;- &quot;°&quot;
 
 # The chance of rain tomorrow
-chance_of_rain_tomorrow &lt;- weather_glasgow_list[[day_tomorrow]][[label_chance_of_rain]]
-print(paste0(&quot;The chance of rain tomorrow: &quot;, chance_of_rain_tomorrow, units_chance_of_rain))</code></pre>
+chance_of_rain_tomorrow &lt;- 
+  weather_glasgow_list[[day_tomorrow]][[label_chance_of_rain]]
+print(paste0(&quot;The chance of rain tomorrow: &quot;, chance_of_rain_tomorrow, 
+             units_chance_of_rain))</code></pre>
 <pre><code>## [1] &quot;The chance of rain tomorrow: 40%&quot;</code></pre>
 <pre class="r"><code># The wind speed on the day after tomorrow
-wind_speed_day_after_tomorrow &lt;- weather_glasgow_list[[day_after_tomorrow]][[label_windspeed]]
-print(paste0(&quot;The wind speed on the day after tomorrow: &quot;, wind_speed_day_after_tomorrow, units_windspeed))</code></pre>
+wind_speed_day_after_tomorrow &lt;- 
+  weather_glasgow_list[[day_after_tomorrow]][[label_windspeed]]
+print(paste0(&quot;The wind speed on the day after tomorrow: &quot;, 
+             wind_speed_day_after_tomorrow, units_windspeed))</code></pre>
 <pre><code>## [1] &quot;The wind speed on the day after tomorrow: 19km/h&quot;</code></pre>
 <pre class="r"><code># The temperature tomorrow.
 temperature_tomorrow &lt;- weather_glasgow_list[[day_tomorrow]][[label_tempature]]
-print(paste0(&quot;The temperature tomorrow: &quot;, temperature_tomorrow, units_temperature))</code></pre>
-<pre><code>## [1] &quot;The temperature tomorrow: 17°&quot;</code></pre>
+print(paste0(&quot;The temperature tomorrow: &quot;, temperature_tomorrow, 
+             units_temperature))</code></pre>
+<pre><code>## [1] &quot;The temperature tomorrow: 18°&quot;</code></pre>
 <p><br></p>
 <p><strong>Question 3.</strong><br />
 Find a 14 day forecast online and create a matrix of the forecasts for
@@ -2857,38 +2860,24 @@ days.</p>
 <p>You will want to give a name to the matrix you create.</p>
 <pre class="r"><code># Assumptions: I&#39;m using the same data source as for question 1
 
-# create a matrix of the forecasts for temperature, where each week is one row
-# and columns correspond to days.
-# matrix will have 2 rows of 7 columns initially NAs
-matrix_fourteen_day_forecast_temperature &lt;- matrix(
-  data = NA, nrow = 2,
-  ncol = 7
-)
-
 # Fill in values manually from webpage with 14 day forecast for temperatures
+glasgow_fourteen_day_forecast_temperature &lt;- c(18, 16, 17, 17, 18, 18, 18,
+                                               19, 21, 19, 19, 19, 19, 18)
 
-# I&#39;m sure there must be a more compact way of doing this
-# brain freeze can&#39;t remember syntax. I&#39;m assuming there&#39;ll
-# be a simple way of initialising a row
-matrix_fourteen_day_forecast_temperature[1, 1] &lt;- 13
-matrix_fourteen_day_forecast_temperature[1, 2] &lt;- 14
-matrix_fourteen_day_forecast_temperature[1, 3] &lt;- 16
-matrix_fourteen_day_forecast_temperature[1, 4] &lt;- 15
-matrix_fourteen_day_forecast_temperature[1, 5] &lt;- 14
-matrix_fourteen_day_forecast_temperature[1, 6] &lt;- 14
-matrix_fourteen_day_forecast_temperature[1, 7] &lt;- 15
-matrix_fourteen_day_forecast_temperature[2, 1] &lt;- 17
-matrix_fourteen_day_forecast_temperature[2, 2] &lt;- 17
-matrix_fourteen_day_forecast_temperature[2, 3] &lt;- 16
-matrix_fourteen_day_forecast_temperature[2, 4] &lt;- 17
-matrix_fourteen_day_forecast_temperature[2, 5] &lt;- 17
-matrix_fourteen_day_forecast_temperature[2, 6] &lt;- 17
-matrix_fourteen_day_forecast_temperature[2, 7] &lt;- 10
+# create a matrix of the forecasts for temperature, where each week is one row 
+# and columns correspond to days.
+# matrix will have 2 rows of 7 columns initially
+matrix_fourteen_day_forecast_temperature &lt;- matrix(
+  glasgow_fourteen_day_forecast_temperature,
+  nrow = 2,
+  ncol = 7,
+  byrow = TRUE
+)
 
 matrix_fourteen_day_forecast_temperature</code></pre>
 <pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-## [1,]   13   14   16   15   14   14   15
-## [2,]   17   17   16   17   17   17   10</code></pre>
+## [1,]   18   16   17   17   18   18   18
+## [2,]   19   21   19   19   19   19   18</code></pre>
 <p><br></p>
 <p><strong>Question 4.</strong><br />
 From the matrix you just made select:</p>
@@ -2900,33 +2889,34 @@ From the matrix you just made select:</p>
 <pre class="r"><code># The third day of the second week
 third_day_second_week &lt;- matrix_fourteen_day_forecast_temperature[2, 3]
 third_day_second_week</code></pre>
-<pre><code>## [1] 16</code></pre>
+<pre><code>## [1] 19</code></pre>
 <pre class="r"><code># The whole second week
 whole_second_week &lt;- matrix_fourteen_day_forecast_temperature[2, ]
 whole_second_week</code></pre>
-<pre><code>## [1] 17 17 16 17 17 17 10</code></pre>
+<pre><code>## [1] 19 21 19 19 19 19 18</code></pre>
 <pre class="r"><code># The first, third and fifth days in both weeks.
-first_third_fifth_days_both_weeks &lt;- matrix_fourteen_day_forecast_temperature[, c(1, 3, 5)]
+first_third_fifth_days_both_weeks &lt;- 
+  matrix_fourteen_day_forecast_temperature[, c(1, 3, 5)]
 first_third_fifth_days_both_weeks</code></pre>
 <pre><code>##      [,1] [,2] [,3]
-## [1,]   13   16   14
-## [2,]   17   16   17</code></pre>
+## [1,]   18   17   18
+## [2,]   19   19   19</code></pre>
 <p><br></p>
 <p><strong>Question 5.</strong><br />
 Write a function that pre-appends “The answer is:” to any character
 input, while for numeric input, it either just returns the number for
 numbers less than 10, or divides the number by 10 for numbers greater
 than 10. For anything else return “Invalid input”.</p>
-<pre class="r"><code>calculate_answer &lt;- function(input) {
+<pre class="r"><code>calculate_answer &lt;- function(input){
   output &lt;- &quot;Invalid input&quot;
   character_preappend &lt;- &quot;The answer is:&quot;
 
   # print(class(input))
 
-  if (class(input) == &quot;character&quot;) {
+  if (class(input) == &quot;character&quot;){
     output &lt;- paste0(character_preappend, input)
   } else {
-    if (class(input) == &quot;numeric&quot;) {
+    if (class(input) == &quot;numeric&quot;){
       if (input &lt; 10) {
         output &lt;- input
       } else {
@@ -2975,21 +2965,21 @@ then checking if they are equal.</li>
 </details>
 </blockquote>
 <pre class="r"><code># checks if two vectors have the same elements
-check_vectors_same &lt;- function(vector1, vector2) {
+check_vectors_same &lt;- function(vector1, vector2){
   output &lt;- &quot;&quot;
   text_error_not_vector &lt;- &quot;Error not a vector&quot;
   text_same_order &lt;- &quot;Exactly the same&quot;
   text_different_order &lt;- &quot;The same&quot;
   text_not_same &lt;- &quot;Different&quot;
 
-  if (is.vector(vector1)) {
-    if (is.vector(vector2)) {
+  if (is.vector(vector1)){
+    if (is.vector(vector2)){
       # We&#39;ve checked both arguments are vectors proceed to evaluate them
 
       # If they have the same elements in the same order, return 
       # &quot;Exactly the same&quot;
       # ?identical
-      if (identical(vector1, vector2)) {
+      if (identical(vector1, vector2)){
         output &lt;- text_same_order
       } else {
         # If they have the same elements but in a different order, return 
@@ -3000,7 +2990,7 @@ check_vectors_same &lt;- function(vector1, vector2) {
         sort_vector1 &lt;- sort(vector1)
         sort_vector2 &lt;- sort(vector2)
 
-        if (identical(sort_vector1, sort_vector2)) {
+        if (identical(sort_vector1, sort_vector2)){
           output &lt;- text_different_order
         } else {
           # If they don’t have the same elements, return &quot;Different&quot;.
@@ -3062,8 +3052,8 @@ matrix_mutiplication_table</code></pre>
 <pre class="r"><code>num_rows &lt;- dim(matrix_mutiplication_table)[1]
 num_cols &lt;- dim(matrix_mutiplication_table)[2]
 
-for (row_index in 1:num_rows) {
-  for (col_index in 1:num_cols) {
+for (row_index in 1:num_rows){
+  for (col_index in 1:num_cols){
     matrix_mutiplication_table[row_index, col_index] &lt;- row_index * col_index
     # print(paste(&quot;row&quot;, row_index, &quot;col&quot;, col_index, matrix_mutiplication_table[row_index, col_index]) )
   }
@@ -3104,12 +3094,13 @@ each number appears in the vector.</p>
 # Meanwhile here&#39;s a long version...
 
 # Print start of line number, default followed by &quot; | &quot;
-print_number_prefix &lt;- function(number_prefix, str, char_histogram, sep = &quot; | &quot;) {
+print_number_prefix &lt;- function(number_prefix, str, char_histogram, 
+                                sep = &quot; | &quot;){
   cat(str, (paste0(number_prefix, sep)), char_histogram)
 }
 
 # Output a text histogram
-create_histogram &lt;- function(vector_text_art, char_histogram = &quot;*&quot;) {
+create_histogram &lt;- function(vector_text_art, char_histogram = &quot;*&quot;){
   output &lt;- &quot;&quot;
 
   length_vector_text_art &lt;- length(vector_text_art)
