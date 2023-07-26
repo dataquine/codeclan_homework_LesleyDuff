@@ -22,8 +22,7 @@ WHERE grade IS NULL AND salary IS NULL;
 --Order your resulting table alphabetically by department, and then by last name
 SELECT 
 	department, 
-	first_name, 
-	last_name 
+	CONCAT(first_name, ' ', last_name) AS full_name 
 FROM employees 
 ORDER BY department, last_name;
 
