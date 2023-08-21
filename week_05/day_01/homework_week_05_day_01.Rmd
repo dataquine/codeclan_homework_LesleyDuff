@@ -98,6 +98,15 @@ qb_competitors %>%
 **Question 5.**  
 Now show the sales from the four competitors as a line graph. Include an extra layer that shows the data points used to make the lines.
 <br>
+```{r}
+
+qb_competitors %>% 
+  ggplot(aes(x = Year, y = Revenue, colour = Company)) +
+  geom_line() +
+  geom_point()
+  
+```
+
 
 **Question 6.**  
 Now the company wants to compare the number of steps that their device counts vs. their competitors. Make a line graph of the number of steps throughout time, and use faceting to compare between companies and people. The data for this is in `qb_device_data`.
