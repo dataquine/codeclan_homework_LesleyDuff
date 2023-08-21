@@ -85,6 +85,15 @@ qb_monthly_sales %>%
 **Question 4.**  
 Show annual sales of personal fitness trackers over the last 5 years broken down by company as a ribbon plot (use `geom_area`). This data is in `qb_competitors`.
 <br>
+```{r}
+#View(qb_competitors)
+#head(qb_competitors)
+
+qb_competitors %>% 
+  ggplot(aes(x = Year, y = Revenue, fill = Company)) +
+  geom_area()
+```
+
 
 **Question 5.**  
 Now show the sales from the four competitors as a line graph. Include an extra layer that shows the data points used to make the lines.
