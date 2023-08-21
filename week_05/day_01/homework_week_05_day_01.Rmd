@@ -48,14 +48,25 @@ Take the data in the dataset `qb_revenue_breakdown` and make a stacked bar chart
 
 ggplot(qb_revenue_breakdown) +
     geom_bar(aes(x = Year, y = Revenue, fill = Product), stat = "identity")
-
 ```
-
 
 
 **Question 2.**  
 Make a line chart showing monthly sales of the "flagship product" - the 'KwikBit Unit 1' - over the last year. This data is inside `qb_monthly_sales`, but you will need to use `filter()` or `subset()` (base `R)`.
 <br>
+```{r}
+#View(qb_monthly_sales)
+
+#qb_monthly_sales %>% 
+#distinct(Cashflow)
+
+qb_monthly_sales %>% 
+  filter(Cashflow == "Kwikbit Unit 1 Sales") %>% 
+  
+  ggplot(aes(x = Date, y = Amount)) +
+  geom_line()
+```
+
 
 **Question 3.**  
 Make a line chart showing monthly revenue and costs over the last year. This data is also in `qb_monthly_sales`.								
