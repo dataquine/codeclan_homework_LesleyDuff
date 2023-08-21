@@ -148,3 +148,94 @@ knitr::include_graphics("palette.JPG")
 ```{r, echo=TRUE}
 col_scheme <- c("#E89FE9", "#50434F", "#B6A7B5", "#F9A472", "#BD7040")
 ```
+
+**Question 1b**
+```{r}
+ggplot(qb_revenue_breakdown) +
+    geom_bar(aes(x = Year, y = Revenue, fill = Product), stat = "identity")+
+   labs(
+    x = "\nYear",
+    y = "Revenue (£)\n",
+    title = "Sources of Revenue (2018-2019)",
+    subtitle = "Revenue breakdown\n",
+  )
+```
+
+**Question 2b**
+```{r}
+qb_monthly_sales %>% 
+  filter(Cashflow == "Kwikbit Unit 1 Sales") %>% 
+  
+  ggplot(aes(x = Date, y = Amount)) +
+  geom_line()+
+  labs(
+    x = "\nDate",
+    y = "Amount (£)\n",
+   title = "Monthly Sales of ‘KwikBit Unit 1’",
+    subtitle = "Sales of flagship product over the last year\n",
+  )
+```
+
+**Question 3b**
+```{r}
+qb_monthly_sales %>% 
+  filter(Cashflow == "Total Revenue" | 
+           (Cashflow == "Cost")) %>% 
+  
+  ggplot(aes(x = Date, y = Amount, colour = Cashflow)) +
+  geom_line()+
+  labs(
+    x = "\nDate",
+    y = "Amount (£)\n",
+    title = "Monthly Revenue and Costs",
+    subtitle = "Over the Last Year\n",
+    colour = "Cash flow",
+  )
+
+```
+
+**Question 4b**
+```{r}
+qb_competitors %>% 
+  ggplot(aes(x = Year, y = Revenue, fill = Company)) +
+  geom_area()+
+  labs(
+    x = "\nYear",
+    y = "Revenue (£)\n",
+    title = "Annual Sales of Personal Fitness Trackers",
+    subtitle = "Over the Last Five Years by Company\n",
+  )
+```
+
+**Question 5b**
+
+```{r}
+qb_competitors %>% 
+  ggplot(aes(x = Year, y = Revenue, colour = Company)) +
+  geom_line() +
+  geom_point()+
+  labs(
+    x = "\nYear",
+    y = "Revenue (£)\n",
+    title = "Sales from Four Competitors",
+    subtitle = "Over the Last Five Years by Company\n",
+  )  
+```
+
+**Question 6b**
+```{r}
+device_with_time <- qb_device_data %>% 
+  mutate(new_time = hours + (mins/60))
+
+device_with_time %>% 
+  ggplot(aes(x = new_time, y = counts, colour=device)) +
+  geom_line() +
+  facet_wrap(device ~ id)+
+  labs(
+    x = "\nTime (hours)",
+    y = "Number of steps\n",
+    title = "Our Step Counts vs. Competitors",
+    subtitle = "Steps Throughout Time\n",
+    colour = "Fitness trackers"
+  )
+```
