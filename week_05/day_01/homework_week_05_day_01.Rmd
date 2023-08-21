@@ -151,11 +151,19 @@ col_scheme <- c("#E89FE9", "#50434F", "#B6A7B5", "#F9A472", "#BD7040")
 
 **Question 1b**
 ```{r}
+col_scheme <- c("#E89FE9", "#50434F", "#B6A7B5", "#F9A472", "#BD7040")
+
 ggplot(qb_revenue_breakdown) +
-    geom_bar(aes(x = Year, y = Revenue, fill = Product), stat = "identity")+
+    geom_bar(aes(x = Year, y = Revenue, fill = Product) , stat = "identity") +
+    scale_fill_manual( values = col_scheme)+
+  coord_flip() +
+  #?label_dollar
+    scale_y_continuous(labels = scales::label_dollar(prefix = "£")) +
+ ## scales::
+  theme_minimal(base_size = 12) +
    labs(
-    x = "\nYear",
-    y = "Revenue (£)\n",
+    x = "Year\n",
+    y = "\nRevenue",
     title = "Sources of Revenue (2018-2019)",
     subtitle = "Revenue breakdown\n",
   )
@@ -167,13 +175,25 @@ qb_monthly_sales %>%
   filter(Cashflow == "Kwikbit Unit 1 Sales") %>% 
   
   ggplot(aes(x = Date, y = Amount)) +
-  geom_line()+
+  geom_line() + 
+  theme_minimal(base_size = 12) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))+
+
+   scale_x_date(
+    NULL,
+    breaks = scales::breaks_width("1 months"), 
+    labels = scales::label_date("%b %y")
+  ) +
+  scale_y_continuous(labels = scales::label_dollar(prefix = "£")) +
+  scale_colour_manual(values = col_scheme) +
+
   labs(
     x = "\nDate",
-    y = "Amount (£)\n",
+    y = "Amount\n",
    title = "Monthly Sales of ‘KwikBit Unit 1’",
     subtitle = "Sales of flagship product over the last year\n",
-  )
+  ) 
+
 ```
 
 **Question 3b**
@@ -183,10 +203,20 @@ qb_monthly_sales %>%
            (Cashflow == "Cost")) %>% 
   
   ggplot(aes(x = Date, y = Amount, colour = Cashflow)) +
-  geom_line()+
+  geom_line() + 
+      scale_colour_manual( values = col_scheme) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))+
+ # scale_y_continuous(labels = scales::comma) +
+  scale_y_continuous(labels = scales::label_dollar(prefix = "£")) +
+   scale_x_date(
+    NULL,
+    breaks = scales::breaks_width("1 months"), 
+    labels = scales::label_date("%b %y")
+  ) +
   labs(
     x = "\nDate",
-    y = "Amount (£)\n",
+    y = "Amount\n",
     title = "Monthly Revenue and Costs",
     subtitle = "Over the Last Year\n",
     colour = "Cash flow",
@@ -198,10 +228,14 @@ qb_monthly_sales %>%
 ```{r}
 qb_competitors %>% 
   ggplot(aes(x = Year, y = Revenue, fill = Company)) +
-  geom_area()+
+  geom_area() + 
+        scale_fill_manual( values = col_scheme) +
+  theme_minimal(base_size = 12) +
+ #     scale_y_continuous(labels = scales::comma) +
+  scale_y_continuous(labels = scales::label_dollar(prefix = "£")) +
   labs(
     x = "\nYear",
-    y = "Revenue (£)\n",
+    y = "Revenue\n",
     title = "Annual Sales of Personal Fitness Trackers",
     subtitle = "Over the Last Five Years by Company\n",
   )
@@ -213,10 +247,14 @@ qb_competitors %>%
 qb_competitors %>% 
   ggplot(aes(x = Year, y = Revenue, colour = Company)) +
   geom_line() +
-  geom_point()+
-  labs(
+  geom_point() + 
+        scale_colour_manual( values = col_scheme) +
+  theme_minimal(base_size = 12) +
+ #     scale_y_continuous(labels = scales::comma) +
+   scale_y_continuous(labels = scales::label_dollar(prefix = "£")) +
+ labs(
     x = "\nYear",
-    y = "Revenue (£)\n",
+    y = "Revenue\n",
     title = "Sales from Four Competitors",
     subtitle = "Over the Last Five Years by Company\n",
   )  
@@ -229,7 +267,13 @@ device_with_time <- qb_device_data %>%
 
 device_with_time %>% 
   ggplot(aes(x = new_time, y = counts, colour=device)) +
-  geom_line() +
+  geom_line() + 
+        scale_colour_manual( values = col_scheme) +
+
+  theme_minimal(base_size = 12) +
+    theme(axis.text = element_text(size = 6))+
+
+      scale_y_continuous(labels = scales::comma) +
   facet_wrap(device ~ id)+
   labs(
     x = "\nTime (hours)",
