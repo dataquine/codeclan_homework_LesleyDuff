@@ -1,0 +1,37 @@
+---
+title: "Introductory ggplot2 Homework"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+The data for this assignment is provided in the CodeClanData package.
+
+* `qb_revenue_breakdown`
+* `qb_monthly_sales`
+* `qb_competitors`
+* `qb_device_data`
+
+Take a little time before you start to familiarise yourself with the data.
+
+# Introductory ggplot2 Homework
+
+```{r}
+library(CodeClanData)
+```
+
+```{r}
+head(qb_revenue_breakdown)
+str(qb_revenue_breakdown)
+
+head(qb_monthly_sales)
+str(qb_monthly_sales)
+
+head(qb_revenue_breakdown)
+str(qb_revenue_breakdown)
+
+head(qb_competitors)
+str(qb_competitors)
+```
+
