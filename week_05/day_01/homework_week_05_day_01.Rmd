@@ -273,7 +273,8 @@ device_with_time %>%
   theme_minimal(base_size = 12) +
     theme(axis.text = element_text(size = 6))+
 
-      scale_y_continuous(labels = scales::comma) +
+      scale_y_continuous(labels = scales::comma,
+                         breaks = c(0, 5000, 10000)) +
   facet_wrap(device ~ id)+
   labs(
     x = "\nTime (hours)",
