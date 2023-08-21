@@ -71,6 +71,16 @@ qb_monthly_sales %>%
 **Question 3.**  
 Make a line chart showing monthly revenue and costs over the last year. This data is also in `qb_monthly_sales`.								
 <br>
+```{r}
+qb_monthly_sales %>% 
+  filter(Cashflow == "Total Revenue" | 
+           (Cashflow == "Cost")) %>% 
+  
+  ggplot(aes(x = Date, y = Amount, colour = Cashflow)) +
+  geom_line()
+```
+
+
 
 **Question 4.**  
 Show annual sales of personal fitness trackers over the last 5 years broken down by company as a ribbon plot (use `geom_area`). This data is in `qb_competitors`.
