@@ -212,8 +212,8 @@ backpack %>%
   scale_fill_colorblind()+
   labs(
     x = "\nBack Pain",
-    y = "Proportion of Students\n",
-    title = "Proportion of Students with Back Pain by Gender",
+    y = "Proportion of Sex\n",
+    title = "Proportion of Students with Back Pain by Sex",
     fill = "Has Back Pain"
   )
 ```
@@ -229,3 +229,27 @@ relationship between backpack weight, body weight, gender and reported backpain.
 Try both `backpack_weight` and `body_weight` as well as the `ratio`.   
 
 *Hint: faceting would be useful here*.  
+
+```{r}
+backpack %>% 
+  ggplot(aes(x = backpack_weight, y=body_weight, colour=sex)) +
+    geom_point() + 
+  facet_grid(backpack_weight ~ sex)
+
+backpack %>% 
+  ggplot(aes(x = backpack_weight, y=body_weight, colour=sex)) +
+    geom_point() + 
+  facet_grid(body_weight ~ sex)
+
+backpack %>% 
+  ggplot(aes(x = backpack_weight, y = ratio, colour=sex)) +
+    geom_point() + 
+  facet_grid(ratio ~ sex)
+
+backpack %>% 
+  ggplot(aes(x = backpack_weight, y=body_weight, colour=sex)) +
+    geom_point() + 
+  facet_grid(back_problems ~ sex)
+```
+
+Sorry pretty lost here, too late for me.
