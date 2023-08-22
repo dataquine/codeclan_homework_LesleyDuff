@@ -26,12 +26,12 @@ names(backpack)
 # Dimensions
 dim(backpack)
 
-#backpack %>% 
+# backpack %>%
 #  distinct(major)# %>% # Philosophy/GRC/Bio
- # distinct(sex) # Female/Male
- # distinct(status) # U/G
- # distinct(year). # 0-6
-#distinct(units) #0 -19
+# distinct(sex) # Female/Male
+# distinct(status) # U/G
+# distinct(year). # 0-6
+# distinct(units) #0 -19
 ```
 
 **Question 2.**
@@ -39,20 +39,24 @@ dim(backpack)
 What is the distribution of backpack weights that students are carrying? Choose an appropriate graph to show the distribution. 
 
 ```{r}
-#View(backpack)
-backpack %>% 
-  summarise(avg_backpack_weight = mean(backpack_weight),
-            median_backpack_weight = median(backpack_weight),
-            min_backpack_weight = min(backpack_weight),
-            max_backpack_weight = max(backpack_weight))
+# View(backpack)
+backpack %>%
+  summarise(
+    avg_backpack_weight = mean(backpack_weight),
+    median_backpack_weight = median(backpack_weight),
+    min_backpack_weight = min(backpack_weight),
+    max_backpack_weight = max(backpack_weight)
+  )
 
-backpack %>% 
+backpack %>%
   ggplot(aes(x = backpack_weight)) +
   geom_histogram(binwidth = 5, col = "white", boundary = 5) +
-  theme_minimal()+
-  labs(x = "\nBackpack Weight (lb)",
-       y = "Count\n",
-       title = "Backpack Weight by Five Pound Intervals")
+  theme_minimal() +
+  labs(
+    x = "\nBackpack Weight (lb)",
+    y = "Count\n",
+    title = "Backpack Weight by Five Pound Intervals"
+  )
 ```
 
 * Most commonly backpacks will weigh greater than 5 lb and less than 15 lb 
@@ -65,22 +69,26 @@ It seems that this dataset is North American in origin as the likely units of we
 Are there differences in backpack weight between sex?   
 
 ```{r}
-backpack %>% 
-  select(sex, backpack_weight) %>% 
-  group_by(sex) %>% 
-  summarise(count = n(),
-            avg_backpack_weight = mean(backpack_weight)) %>% 
+backpack %>%
+  select(sex, backpack_weight) %>%
+  group_by(sex) %>%
+  summarise(
+    count = n(),
+    avg_backpack_weight = mean(backpack_weight)
+  ) %>%
   ungroup()
-  
-backpack %>% 
+
+backpack %>%
   ggplot(aes(x = backpack_weight, fill = sex)) +
   geom_histogram(binwidth = 5, col = "white", boundary = 5) +
-  facet_wrap(~sex)+
-  theme_minimal()+
-  labs(x = "\nBackpack Weight (lb)",
-       y = "Count\n",
-       title = "Backpack Weight by Five Pound Intervals and Sex",
-       fill = "Sex")
+  facet_wrap(~sex) +
+  theme_minimal() +
+  labs(
+    x = "\nBackpack Weight (lb)",
+    y = "Count\n",
+    title = "Backpack Weight by Five Pound Intervals and Sex",
+    fill = "Sex"
+  )
 ```
 * There are more females (55) than males (45). 
 * Average backpack weight for females is 11.04 lb.
@@ -97,12 +105,18 @@ backpack %>%
 What is the relationship between body weight and backpack weight?
 
 ```{r}
-backpack %>% 
+backpack %>%
   ggplot(aes(
     x = body_weight,
-    y = backpack_weight)) +
-  geom_point() + 
-  labs(x = "Body Weight (lb)", y = "Backpack Weight (lb)")
+    y = backpack_weight
+  )) +
+  geom_point() +
+  theme_minimal() +
+  labs(
+    x = "\nBody Weight (lb)",
+    y = "Backpack Weight (lb)\n",
+    title = "Body Weight vs. Backpack Weight"
+  )
 ```
 
 * The lightest backpacks are carried by body weights < 125 lb.
@@ -113,13 +127,39 @@ There is no clear overall pattern, as body weight increases backpack weights are
 mostly distributed fairly evenly above or below body weights. Individual 
 strength would appear more relevant than body weight.
 
-
-
-
 **Question 5.**  
 
 Is this relationship different between men and women? Choose an appropriate plot and interpret your findings.  
 
+```{r}
+backpack %>%
+  mutate(backpack_bodyweight_percent = backpack_weight / body_weight) %>%
+  select(backpack_bodyweight_percent, sex) %>%
+  group_by(sex) %>%
+  summarise(avg_backpack_bodyweight_percent = 
+              mean(backpack_bodyweight_percent) * 100) %>% 
+  ungroup()
+
+backpack %>%
+  ggplot( aes(
+    x = body_weight,
+    y = backpack_weight,
+    colour = sex
+  )) +
+  geom_point() +
+  theme_minimal() +
+  labs(
+    x = "\nBody Weight (lb)",
+    y = "Backpack Weight (lb)\n",
+    title = "Body Weight vs. Backpack Weight by Sex",
+    colour = "Sex"
+  )
+```
+* There is a wider spread of results for male than female.
+* There is more clustering of females under 150 lb in body weight.
+* Females on average carry a higher percentage of their body weight in their 
+backpacks 8.1% female vs 7.3% males.
+* One male carries the heaviest backpack and is not in the top 5 heaviest males.
 
 **Question 6.**  
 
@@ -138,6 +178,3 @@ Now you've investigated your data separately, create plots to describe the relat
 Try both `backpack_weight` and `body_weight` as well as the `ratio`.   
 
 *Hint: faceting would be useful here*.  
-
-
-
