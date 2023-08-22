@@ -13,6 +13,8 @@ ake note of variable names and dimensions.
 
 ```{r}
 library(CodeClanData)
+library(ggthemes)
+library(scales)
 library(tidyverse)
 ```
 
@@ -155,8 +157,10 @@ backpack %>%
     colour = "Sex"
   )
 ```
+
 * There is a wider spread of results for male than female.
-* There is more clustering of females under 150 lb in body weight.
+* There is more clustering of females under 150 lb in body weight and < 15 lb 
+backpack.
 * Females on average carry a higher percentage of their body weight in their 
 backpacks 8.1% female vs 7.3% males.
 * One male carries the heaviest backpack and is not in the top 5 heaviest males.
@@ -165,15 +169,62 @@ backpacks 8.1% female vs 7.3% males.
 
 What **proportion** of students report back pain?   
 
+```{r}
+backpack %>%
+  summarise(back_problems_proportion = sum(back_problems) / n())
+
+backpack %>%
+  mutate(back_problems = recode(back_problems, "0" = "No", "1" = "Yes")) %>% 
+
+  ggplot(aes(x = "", y=..count../sum(..count..), fill = back_problems)) +
+  scale_y_continuous(labels = label_number())+
+  geom_bar() +
+  theme_minimal() +
+  scale_fill_colorblind()+
+  labs(
+    x = "\nBack Pain",
+    y = "Proportion of Total Students\n",
+    title = "Proportion of Students with Back Pain",
+    fill = "Has Back Pain"
+  )
+```
+0.32 of Students have back pain.
+
 
 **Question 7.**  
 
 Is this proportion different between men and women? 
 
+```{r}
+
+backpack %>%
+  group_by(sex) %>% 
+  summarise(back_problems_proportion = sum(back_problems) / n()) %>% 
+  ungroup()
+
+backpack %>%
+ mutate(back_problems = recode(back_problems, "0" = "No", "1" = "Yes")) %>% 
+  ggplot(aes(x = "",  y=..count../sum(..count..), fill = back_problems)) +
+  scale_y_continuous(labels = label_number())+
+  geom_bar(position = "fill") +
+  facet_wrap(~sex) +
+  theme_minimal() +
+  scale_fill_colorblind()+
+  labs(
+    x = "\nBack Pain",
+    y = "Proportion of Students\n",
+    title = "Proportion of Students with Back Pain by Gender",
+    fill = "Has Back Pain"
+  )
+```
+
+* 0.44 of females have back pain.
+* 0.18 of males have back pain.
 
 **Question 8.**  
 
-Now you've investigated your data separately, create plots to describe the relationship between backpack weight, body weight, gender and reported backpain.
+Now you've investigated your data separately, create plots to describe the 
+relationship between backpack weight, body weight, gender and reported backpain.
 
 Try both `backpack_weight` and `body_weight` as well as the `ratio`.   
 
