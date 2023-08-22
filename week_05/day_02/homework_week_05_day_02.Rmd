@@ -1,0 +1,79 @@
+---
+title: "Advanced `ggplot2` homework"
+output:
+  html_document:
+    df_print: paged
+---
+# MVP
+
+
+
+
+
+**Question 1.**  
+
+Load in the libraries you need, and look at the `backpack` data. Take note of variable names and dimensions. 
+
+```{r}
+library(CodeClanData)
+library(tidyverse)
+```
+
+```{r}
+head(backpack)
+str(backpack)
+
+# Variable names
+names(backpack)
+
+# Dimensions
+dim(backpack)
+
+#backpack %>% 
+#  distinct(major)# %>% # Philosophy/GRC/Bio
+ # distinct(sex) # Female/Male
+ # distinct(status) # U/G
+ # distinct(year). # 0-6
+#distinct(units) #0 -19
+```
+
+**Question 2.**
+
+What is the distribution of backpack weights that students are carrying? Choose an appropriate graph to show the distribution. 
+
+
+**Question 3.**  
+
+Are there differences in backpack weight between sex?   
+
+
+**Question 4.**  
+
+What is the relationship between body weight and backpack weight?
+
+
+**Question 5.**  
+
+Is this relationship different between men and women? Choose an appropriate plot and interpret your findings.  
+
+
+**Question 6.**  
+
+What **proportion** of students report back pain?   
+
+
+**Question 7.**  
+
+Is this proportion different between men and women? 
+
+
+**Question 8.**  
+
+Now you've investigated your data separately, create plots to describe the relationship between backpack weight, body weight, gender and reported backpain.
+
+Try both `backpack_weight` and `body_weight` as well as the `ratio`.   
+
+*Hint: faceting would be useful here*.  
+
+
+
