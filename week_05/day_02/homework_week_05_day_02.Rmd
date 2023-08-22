@@ -8,7 +8,8 @@ output:
 
 **Question 1.**  
 
-Load in the libraries you need, and look at the `backpack` data. Take note of variable names and dimensions. 
+Load in the libraries you need, and look at the `backpack` data. 
+ake note of variable names and dimensions. 
 
 ```{r}
 library(CodeClanData)
@@ -47,19 +48,17 @@ backpack %>%
 
 backpack %>% 
   ggplot(aes(x = backpack_weight)) +
- # ?geom_histogram
   geom_histogram(binwidth = 5, col = "white", boundary = 5) +
-#  geom_histogram(binwidth = 5, col = "white") +
   theme_minimal()+
-  labs(x = "\nBackpack Weight (lbs)",
+  labs(x = "\nBackpack Weight (lb)",
        y = "Count\n",
        title = "Backpack Weight by Five Pound Intervals")
 ```
 
-* Most commonly backpacks will weigh greater than 5 pounds and less than 15 pounds. 
-* The lightest is 2 pounds
-* The heaviest is 35 pounds
-It seems that this dataset is North American in origin as the likely units of weight are in pounds. [Backpack](https://en.wikipedia.org/wiki/Backpack)
+* Most commonly backpacks will weigh greater than 5 lb and less than 15 lb 
+* The lightest is 2 lb.
+* The heaviest is 35 lb.
+It seems that this dataset is North American in origin as the likely units of weight are in pounds (lb). [Backpack](https://en.wikipedia.org/wiki/Backpack)
 
 **Question 3.**  
 
@@ -75,28 +74,46 @@ backpack %>%
   
 backpack %>% 
   ggplot(aes(x = backpack_weight, fill = sex)) +
- # ?geom_histogram
   geom_histogram(binwidth = 5, col = "white", boundary = 5) +
-    facet_wrap(~sex)+
-#  geom_histogram(binwidth = 5, col = "white") +
+  facet_wrap(~sex)+
   theme_minimal()+
-  labs(x = "\nBackpack Weight (lbs)",
+  labs(x = "\nBackpack Weight (lb)",
        y = "Count\n",
-       title = "Backpack Weight by Five Pound Intervals and Sex")
+       title = "Backpack Weight by Five Pound Intervals and Sex",
+       fill = "Sex")
 ```
 * There are more females (55) than males (45). 
-* Average backpack weight for females is 11.04 lbs.
-* Average backpack weight for males is 12.42 lbs.
+* Average backpack weight for females is 11.04 lb.
+* Average backpack weight for males is 12.42 lb.
 * More males carry backpacks in the 15-20 lb range than females.
 * More females carry backpacks in the 20-25 lb range than males. 
-* Most common backpack weight for females is> 5 lbs < 10 lbs.
-* Most common backpack weight for males is > 10 lbs < 15 lbs.
+* Most common backpack weight for females is> 5 lb < 10 lb.
+* Most common backpack weight for males is > 10 lb < 15 lb.
 
 
 
 **Question 4.**  
 
 What is the relationship between body weight and backpack weight?
+
+```{r}
+backpack %>% 
+  ggplot(aes(
+    x = body_weight,
+    y = backpack_weight)) +
+  geom_point() + 
+  labs(x = "Body Weight (lb)", y = "Backpack Weight (lb)")
+```
+
+* The lightest backpacks are carried by body weights < 125 lb.
+* The heaviest backpacks are carried by body weights < 200 lb.
+* The heaviest body weights (> 200 lb) carry backpacks < 15 lb.
+
+There is no clear overall pattern, as body weight increases backpack weights are
+mostly distributed fairly evenly above or below body weights. Individual 
+strength would appear more relevant than body weight.
+
+
 
 
 **Question 5.**  
