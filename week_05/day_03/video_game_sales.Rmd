@@ -1,6 +1,8 @@
 ---
 title: "Video Game Sales"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 # Video Game Sales
 
@@ -36,11 +38,10 @@ glimpse(video_game_sales)
 ## Is there a relationship between user_score and critic_score?
 ```{r}
 video_game_sales %>% 
-  select(user_score, critic_score) %>% 
-
-#  summarise(avg_user_score = mean(user_score),
- #           avg_critic_score = mean(critic_score)) %>% 
+ summarise(avg_user_score = mean(user_score),
+            avg_critic_score = mean(critic_score))
   
+video_game_sales %>% 
   ggplot(aes(x = user_score, y = critic_score)) +
   geom_point()
 ```
@@ -49,12 +50,30 @@ Yes there is a relationship. It looks like in general if `critic_score` is high
 then `user_score` will be high.
 
 * Strongest when `user_score` > 5 and `critic_score` > 40
+* Average `user_score` is 7.24
+* Average `critic_score` is 74.28
+
+
 
 ## Do certain developers publish more of a certain genre of game?
 
 ```{r}
-
+  
+video_game_sales %>% 
+#mutate(developer = as.factor(developer),
+ #        genre = as.factor(genre)) %>% 
+  ggplot(aes(x = developer, y=genre, fill = genre)) +
+  geom_col(position = "dodge") #+
+#  facet_grid(~developer ~ genre)
 ```
+ Can see one with a lot of pink to be Sports but can't get which developer. Tried a lot of facet_wrap and facet_grid can't get something usable.
+ 
+ Sorry, struggling with this spent 2 hours at this point(ugh!).
+ 
+ Stopping :-(
+
+
+
 
 
 
