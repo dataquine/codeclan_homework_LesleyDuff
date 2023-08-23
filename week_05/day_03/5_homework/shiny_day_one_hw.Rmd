@@ -1,0 +1,45 @@
+---
+title: "Shiny - Day 1 Homework"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+    css: ../../../styles.css
+  pdf_document: default
+---
+
+# MVP
+
+## Video Game Sales
+
+In the CodeClanData package there is a dataset called game_sales. It contains information about world wide video game sales. `CodeClanData::game_sales`
+
+Your task is to create an interactive data dashboard of this data using R Shiny.
+
+The Dashboard can take whatever appearance and layout you like but must contain:
+
+- At least one input widget
+- At least one interactive output (i.e. a plot that changes/updates based on the input)
+
+## Guidance
+
+Before writing any R Shiny code make sure to explore the data. Some things to explore:
+
+- is there a relationship between user_score and critic_score?
+- do certain developers publish more of a certain genre of game?
+- is there a relationship between genre and sales?
+- have sales increased over time?
+
+Draw a simple diagram of your app before coding the UI
+Create plots in a notebook first to check they work
+
+Think about WHY you are plotting the data and thinking about what insights and decisions do you want the dashboard users to get from it.
+
+
+# Extension
+
+- Make your app pretty with a theme.
+- Include another interactive output: this time a table output showing the filtered data.
+

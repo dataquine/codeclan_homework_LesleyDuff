@@ -1,0 +1,61 @@
+---
+title: "Video Game Sales"
+output: html_notebook
+---
+# Video Game Sales
+
+```{r}
+library(CodeClanData)
+library(tidyverse)
+```
+
+```{r}
+video_game_sales <- CodeClanData::game_sales
+
+head(video_game_sales)
+dim(video_game_sales)
+```
+
+
+
+
+```{r}
+str(video_game_sales)
+glimpse(video_game_sales)
+```
+
+```{r}
+#video_game_sales %>% 
+  #distinct(genre) 
+  #distinct(publisher)
+  #distinct(developer)
+  #distinct(rating)
+  #distinct(platform)
+```
+
+## Is there a relationship between user_score and critic_score?
+```{r}
+video_game_sales %>% 
+  select(user_score, critic_score) %>% 
+
+#  summarise(avg_user_score = mean(user_score),
+ #           avg_critic_score = mean(critic_score)) %>% 
+  
+  ggplot(aes(x = user_score, y = critic_score)) +
+  geom_point()
+```
+
+Yes there is a relationship. It looks like in general if `critic_score` is high 
+then `user_score` will be high.
+
+* Strongest when `user_score` > 5 and `critic_score` > 40
+
+## Do certain developers publish more of a certain genre of game?
+
+```{r}
+
+```
+
+
+
+
