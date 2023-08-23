@@ -92,6 +92,7 @@ backpack %>%
     fill = "Sex"
   )
 ```
+
 * There are more females (55) than males (45). 
 * Average backpack weight for females is 11.04 lb.
 * Average backpack weight for males is 12.42 lb.
@@ -188,6 +189,7 @@ backpack %>%
     fill = "Has Back Pain"
   )
 ```
+
 0.32 of Students have back pain.
 
 
