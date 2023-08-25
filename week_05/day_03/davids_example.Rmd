@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+
+games <- CodeClanData::game_sales
+
+```
+## Quik initial data exploration
+
+* rows/columns
+* data types
+* what are the columns about
+
+```{r}
+
+glimpse(games)
+```
+
+- is there a relationship between user_score and critic_score?
+```{r}
+games %>% 
+  select(name, critic_score, user_score)
+```
+
+```{r}
+ggplot(games, aes(x = user_score, y = critic_score))+
+  geom_point() +
+  
+  facet_wrap(~genre)+ # tilde = formula
+#  facet_wrap(facets = vars(genre)+ # tilde = formula
+xlim(0, 10) +
+  ylim(0, 100)
+
+#facet_grid()
+```
+
+
+- do certain developers publish more of a certain genre of game?
+```{r}
+games %>% 
+  group_by(developer, genre) %>% 
+  summarise(n_games = n(), groups = "drop")
+
+```
+
+* is there a relationship between genre and sales?
+genre is a categorical column
+What is total sales per genre
+```{r}
+games %>% 
+  group_by(genre) %>% 
+  summarise(total_sales = sum(sales)) %>% 
+  ggplot(aes(x = genre, y = total_sales))+
+  geom_col() +
+  coord_flip() +
+labs(title = "Avg sales by genre") +
+  theme(plot.title = element_text(hjust = -0.5))
+```
+
+* have sales increased over time?
+```{r}
+games %>% 
+  group_by(year_of_release) %>% 
+  summarise(total_sales = sum(sales)) %>% 
+  ggplot(aes(x = year_of_release, y = total_sales))+
+  geom_line()
+```
+
