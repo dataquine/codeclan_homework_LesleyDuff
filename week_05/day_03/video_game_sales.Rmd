@@ -43,7 +43,8 @@ video_game_sales %>%
   
 video_game_sales %>% 
   ggplot(aes(x = user_score, y = critic_score)) +
-  geom_point()
+  geom_point()+
+  geom_smooth(method = "lm")
 ```
 
 Yes there is a relationship. It looks like in general if `critic_score` is high 
@@ -60,11 +61,15 @@ then `user_score` will be high.
 ```{r}
   
 video_game_sales %>% 
+ # filter(genre== "Sports") %>% 
+  filter(genre != "Sports") %>% 
+  filter(genre != "Action") %>% 
 #mutate(developer = as.factor(developer),
  #        genre = as.factor(genre)) %>% 
-  ggplot(aes(x = developer, y=genre, fill = genre)) +
-  geom_col(position = "dodge") #+
-#  facet_grid(~developer ~ genre)
+  ggplot(aes(x = genre, fill = genre)) +
+ # geom_col(position = "dodge") #+
+  geom_bar() +
+  facet_wrap(~developer, ncol=4)
 ```
  Can see one with a lot of pink to be Sports but can't get which developer. Tried a lot of facet_wrap and facet_grid can't get something usable.
  
