@@ -9,6 +9,8 @@ subtitle: Week 05, weekend
 ---
 # Shiny - Advanced UI Homework
 
+## Analysis 
+
 ```{r}
 library(tidyverse)
 ```
@@ -16,5 +18,20 @@ library(tidyverse)
 ```{r}
 # Load Diamonds dataset
 source("shiny_diamonds_app/R/diamonds.R")
+```
+
+```{r}
+head(diamonds)
+dim(diamonds)
+glimpse(diamonds)
+str(diamonds)
+```
+
+```{r}
+# how many missing values across columns
+diamonds %>% 
+  summarise(across(.fns = ~ sum(is.na(.x))))
+
+# No NAs found
 ```
 
