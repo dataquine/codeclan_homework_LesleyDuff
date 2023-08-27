@@ -13,3 +13,8 @@ subtitle: Week 05, weekend
 library(tidyverse)
 ```
 
+```{r}
+# Load Diamonds dataset
+source("shiny_diamonds_app/R/diamonds.R")
+```
+
