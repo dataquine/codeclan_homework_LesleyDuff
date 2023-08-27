@@ -42,17 +42,22 @@ ui <- fluidPage(
 
     # Show a scatter plot
     mainPanel(
-      # Output: Tabset w/ plot, summary, and table ----
+      # Tabset with plot, and table ----
       tabsetPanel(id = "tabset_id",
                   type = "tabs",
                   selected = NULL,
-        tabPanel("Plot", 
+        tabPanel(id = "plot_panel_id",
+                 "Diamond Prices", 
                  plotOutput("histogramPlot"),
-                 verbatimTextOutput("sliderText")
+                 verbatimTextOutput("sliderText"),
+                 icon = icon("gem")
+                 
                  ),
     #    tabPanel("Summary", verbatimTextOutput("summary")),
-        tabPanel("Table", 
-                 DT::dataTableOutput("tablePlot")
+        tabPanel(id = "table_panel_id",
+                 "Table", 
+                 DT::dataTableOutput("tablePlot"),
+                 icon = icon("table")
                  )
       )
     )
@@ -71,8 +76,9 @@ server <- function(input, output, session) {
     #print(input$caretInput)
     diamonds %>%
       #select(price, cut)
+     # mutate(test = count())
       filter(cut %in% input$cutInput) %>% 
-     filter(carat >= input$caratInput[1] & 
+      filter(carat >= input$caratInput[1] & 
               carat <= input$caratInput[2]) 
   })
 
@@ -84,31 +90,23 @@ server <- function(input, output, session) {
   
   output$histogramPlot <- renderPlot({
     #print(filtered_data())
-    ggplot(filtered_data(), aes(x = price)) +
+    ggplot(filtered_data(), 
+           aes(x = price, fill = cut)) +
       #?geom_histogram
-      geom_histogram(
-        color = "white", 
-        fill = "steelblue",
-        binwidth = 1000#,
-       # position =0
+      #?geom_bar
+      #geom_bar(aes(fill = cut),
+               # cut_width(x,width
+            
+      geom_histogram(aes(fill = cut),
+                     #color = "white", 
+       # fill = "steelblue",
+        binwidth = 1000
       ) +
       labs(
-        
         title = "Diamond price vs. Count",
         x = "\nPrice",
         y = "Count\n"
       )
-
-    # generate bins based on input$bins from ui.R
- #   x <- faithful[, 2]
-  #  bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-    # draw the histogram with the specified number of bins
-   # hist(x,
-    #  breaks = bins, col = "darkgray", border = "white",
-     # xlab = "Waiting time to next eruption (in mins)",
-      #main = "Histogram of waiting times"
-    #)
   })
   # Generate an HTML table view of the data ----
   output$tablePlot <- DT::renderDataTable({
