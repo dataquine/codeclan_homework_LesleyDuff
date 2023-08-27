@@ -35,3 +35,18 @@ diamonds %>%
 # No NAs found
 ```
 
+### Summary stats
+```{r}
+diamonds %>% 
+  summary()
+```
+
+
+### Histogram
+```{r}
+diamonds %>% 
+  ggplot(aes(x = price))+
+  geom_histogram(color = "white")
+```
+
+
