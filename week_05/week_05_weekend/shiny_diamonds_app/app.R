@@ -6,14 +6,19 @@
 #
 #    http://shiny.rstudio.com/
 #
+library(bslib)
 
-#library(bslib)
-#library(shiny)
 library(tidyverse)
+
+list_fill_variables <- list(
+  "Cut" = "cut",
+  "Colour" = "color",
+  "Clarity" = "clarity"
+)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
- # theme = bs_theme(bootswatch = "minty"),
+  theme = bs_theme(bootswatch = "flatly"),
 
   # Application title
   titlePanel("Diamonds Data"),
@@ -21,93 +26,112 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
-      checkboxGroupInput( # ?checkboxGroupInput
-        "cutInput",
+      checkboxGroupInput(
+        inputId = "filter_cut",
         label = strong("Filter by cut:"),
         choices = unique(diamonds$cut),
-        selected = unique(diamonds$cut),
+        selected = unique(diamonds$cut)
       ),
-      # br() element to introduce extra vertical spacing ----
-      br(),
-       sliderInput("caratInput",
-                  label = strong("Carat:"),
-                 min = min(diamonds$carat),
-                max = max(diamonds$carat),
-               value = range(diamonds$carat),
-               round = TRUE,
-               ticks =  TRUE,
-               step = 0.2
-               )
+      radioButtons("fill_variable",
+        label = strong("Fill"),
+        choices = list_fill_variables
+      ),
+      hr(),
+      sliderInput(
+        inputId = "slider_carat",
+        label = strong("Carat:"),
+        min = min(diamonds$carat),
+        max = max(diamonds$carat),
+        value = range(diamonds$carat),
+        round = TRUE,
+        ticks = TRUE,
+        step = 0.2
+      )
     ),
 
-    # Show a scatter plot
+    # Main panel ####
     mainPanel(
-      # Tabset with plot, and table ----
-      tabsetPanel(id = "tabset_id",
-                  type = "tabs",
-                  selected = NULL,
-        tabPanel(id = "plot_panel_id",
-                 "Diamond Prices", 
-                 plotOutput("histogramPlot"),
-                 verbatimTextOutput("sliderText"),
-                 icon = icon("gem")
-                 
-                 ),
-    #    tabPanel("Summary", verbatimTextOutput("summary")),
-        tabPanel(id = "table_panel_id",
-                 "Table", 
-                 DT::dataTableOutput("tablePlot"),
-                 icon = icon("table")
-                 )
+      # Tabset with plot and table ####
+      tabsetPanel(
+        id = "tabset_tabs",
+        type = "tabs",
+        selected = NULL,
+        header = br(),
+        tabPanel(
+          "Prices",
+          plotOutput("histogramPlot"),
+          icon = icon("gem")
+        ),
+        tabPanel(
+          "Table",
+          DT::dataTableOutput("tablePlot"),
+          icon = icon("table")
+        )
       )
     )
   )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw plots
 server <- function(input, output, session) {
   carat_range <- reactive({
-    cbind(input$caretInput[1],
-          input$caretInput[2])
+    cbind(
+      input$caretInput[1],
+      input$caretInput[2]
+    )
   })
 
   filtered_data <- reactive({
-    #req(input$cutInput) # ?req
-    #print(input$caretInput)
+    req(input$filter_cut, input$slider_carat)
     diamonds %>%
-      #select(price, cut)
-     # mutate(test = count())
-      filter(cut %in% input$cutInput) %>% 
-      filter(carat >= input$caratInput[1] & 
-              carat <= input$caratInput[2]) 
+      filter(cut %in% input$filter_cut) %>%
+      filter(carat >= input$slider_carat[1] &
+        carat <= input$slider_carat[2])
   })
 
-  output$sliderText <- renderText({
- #   print(input$caratInput)
-    paste0("You've selected the range: ", # ?toJSON
-           input$caratInput[1], " to ", input$caratInput[2])
-  })
-  
+  # Histogram plot of diamond price by counts ####
   output$histogramPlot <- renderPlot({
-    #print(filtered_data())
-    ggplot(filtered_data(), 
-           aes(x = price, fill = cut)) +
-      #?geom_histogram
-      #?geom_bar
-      #geom_bar(aes(fill = cut),
-               # cut_width(x,width
-            
-      geom_histogram(aes(fill = cut),
-                     #color = "white", 
-       # fill = "steelblue",
-        binwidth = 1000
-      ) +
+    p <- ggplot(filtered_data(), aes(x = price)) +
       labs(
-        title = "Diamond price vs. Count",
+        title = "Diamond Price vs. Count",
         x = "\nPrice",
         y = "Count\n"
-      )
+      ) +
+      scale_x_continuous(labels = scales::dollar_format()) +
+      scale_y_continuous(labels = scales::comma_format()) +
+      theme_minimal() +
+      scale_fill_brewer(palette = "Blues")
+
+    # Not happy with this section but couldn't
+    # figure out how to get input$fill_variable to work
+    # kept showing red
+    if (input$fill_variable == "cut") {
+      p <- p + geom_histogram(aes(fill = cut),
+        color = "white",
+        binwidth = 1000,
+        boundary = 0
+      ) +
+        labs(fill = "Cut")
+    }
+    if (input$fill_variable == "color") {
+      p <- p + geom_histogram(aes(fill = color),
+        color = "white",
+        binwidth = 1000,
+        boundary = 0
+      ) +
+        labs(fill = "Colour")
+    }
+    if (input$fill_variable == "clarity") {
+      p <- p + geom_histogram(aes(fill = clarity),
+        color = "white",
+        binwidth = 1000,
+        boundary = 0
+      ) +
+        labs(fill = "Clarity")
+    }
+    p
   })
+
   # Generate an HTML table view of the data ----
   output$tablePlot <- DT::renderDataTable({
     filtered_data()
