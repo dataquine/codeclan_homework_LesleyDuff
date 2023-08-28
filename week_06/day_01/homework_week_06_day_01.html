@@ -1627,6 +1627,187 @@ display: none;
 
 <div id="probability-homework" class="section level1">
 <h1>Probability homework</h1>
+<p>MVP</p>
+<div id="the-titanic" class="section level2">
+<h2>The Titanic</h2>
+<p>Some time after the disaster a journalist wrote that crew members
+were more likely to have survived the sinking than passengers. This was
+disputed by a descendant of one of the surviving crew members, who
+suggested that the opposite was true, i.e. passengers were more likely
+to have survived than crew.</p>
+<p>Calculate the conditional probabilities <span class="math inline">\(p
+(survived | crew)\)</span> and <span class="math inline">\(p (survived |
+passenger)\)</span> to settle this dispute.</p>
+<div id="examine-dataset" class="section level3">
+<h3>Examine dataset</h3>
+<pre class="r"><code># Load in libraries and helper functions ####
+library(gtools)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>source(&#39;prob.R&#39;) </code></pre>
+<pre class="r"><code># Read titanic dataset ####
+titanic &lt;- read_csv(&quot;data/titanic.csv&quot;)</code></pre>
+<pre><code>## Rows: 2207 Columns: 9
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (5): gender, class, embarked, country, survived
+## dbl (4): age, fare, sibsp, parch
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code># Examine titanic dataset variables in question ####
+
+glimpse(titanic)</code></pre>
+<pre><code>## Rows: 2,207
+## Columns: 9
+## $ gender   &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;female&quot;, &quot;female&quot;, &quot;male&quot;, &quot;male&quot;, &quot;…
+## $ age      &lt;dbl&gt; 42.0000000, 13.0000000, 16.0000000, 39.0000000, 16.0000000, 2…
+## $ class    &lt;chr&gt; &quot;3rd&quot;, &quot;3rd&quot;, &quot;3rd&quot;, &quot;3rd&quot;, &quot;3rd&quot;, &quot;3rd&quot;, &quot;2nd&quot;, &quot;2nd&quot;, &quot;3rd&quot;…
+## $ embarked &lt;chr&gt; &quot;Southampton&quot;, &quot;Southampton&quot;, &quot;Southampton&quot;, &quot;Southampton&quot;, &quot;…
+## $ country  &lt;chr&gt; &quot;United States&quot;, &quot;United States&quot;, &quot;United States&quot;, &quot;England&quot;,…
+## $ fare     &lt;dbl&gt; 7.1100, 20.0500, 20.0500, 20.0500, 7.1300, 7.1300, 24.0000, 2…
+## $ sibsp    &lt;dbl&gt; 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ parch    &lt;dbl&gt; 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0…
+## $ survived &lt;chr&gt; &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;yes&quot;, &quot;y…</code></pre>
+<pre class="r"><code>summary(titanic)</code></pre>
+<pre><code>##     gender               age             class             embarked        
+##  Length:2207        Min.   : 0.1667   Length:2207        Length:2207       
+##  Class :character   1st Qu.:22.0000   Class :character   Class :character  
+##  Mode  :character   Median :29.0000   Mode  :character   Mode  :character  
+##                     Mean   :30.4367                                        
+##                     3rd Qu.:38.0000                                        
+##                     Max.   :74.0000                                        
+##                     NA&#39;s   :2                                              
+##    country               fare             sibsp            parch       
+##  Length:2207        Min.   :  0.000   Min.   :0.0000   Min.   :0.0000  
+##  Class :character   1st Qu.:  0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Mode  :character   Median :  7.151   Median :0.0000   Median :0.0000  
+##                     Mean   : 19.773   Mean   :0.2972   Mean   :0.2294  
+##                     3rd Qu.: 20.111   3rd Qu.:0.0000   3rd Qu.:0.0000  
+##                     Max.   :512.061   Max.   :8.0000   Max.   :9.0000  
+##                     NA&#39;s   :26        NA&#39;s   :10       NA&#39;s   :10      
+##    survived        
+##  Length:2207       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+##                    
+## </code></pre>
+<pre class="r"><code>titanic %&gt;% 
+  group_by(survived) %&gt;% 
+  summarise(count = n())</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["survived"],"name":[1],"type":["chr"],"align":["left"]},{"label":["count"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"no","2":"1496"},{"1":"yes","2":"711"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>titanic %&gt;% 
+  distinct(class) </code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["class"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"3rd"},{"1":"2nd"},{"1":"1st"},{"1":"engineering crew"},{"1":"victualling crew"},{"1":"restaurant staff"},{"1":"deck crew"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Create crew column ####
+# Create new column to indicate whether each individual was a passenger (1st,
+# 2nd or 3rd class) or a member of the crew (treat restaurant staff as crew)
+
+titanic &lt;- titanic %&gt;% 
+  mutate(
+    crew = case_when(
+      # passengers are not crew, Crew = FALSE
+     class == &quot;1st&quot; | class == &quot;2nd&quot; | class == &quot;3rd&quot; ~ FALSE,
+     # Crew = TRUE
+     class == &quot;engineering crew&quot; ~ TRUE,
+     class == &quot;victualling crew&quot; ~ TRUE,
+     class == &quot;restaurant staff&quot; ~ TRUE,
+     class == &quot;deck crew&quot; ~ TRUE,
+     TRUE ~ FALSE), 
+    .after = class
+  )
+
+#titanic
+
+titanic %&gt;% 
+  group_by(crew) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  ungroup()</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["crew"],"name":[1],"type":["lgl"],"align":["right"]},{"label":["count"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"FALSE","2":"1317"},{"1":"TRUE","2":"890"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="calculate-probsurvived-crew" class="section level3">
+<h3>Calculate prob(survived ∣ crew)</h3>
+<p><span class="math inline">\(p(A | B) = \frac{p(A \cap
+B)}{p(B)}\)</span>, <span class="math inline">\(p(survived | crew) =
+\frac{p(survived \cap crew)}{p(crew)}\)</span></p>
+<pre class="r"><code>prob_survived_given_crew = titanic %&gt;%
+  filter(crew == TRUE) %&gt;%
+  summarise(prob = sum(survived == &quot;yes&quot;) / n())
+
+prob_survived_given_crew</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["prob"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.2370787"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="calculate-probsurvived-passenger" class="section level3">
+<h3>Calculate prob(survived ∣ passenger)</h3>
+<p><span class="math inline">\(p(A | B) = \frac{p(A \cap
+B)}{p(B)}\)</span>, <span class="math inline">\(p(survived | passenger)
+= \frac{p(survived \cap passenger)}{p(passenger)}\)</span></p>
+<pre class="r"><code>prob_survived_given_passenger = titanic %&gt;%
+  filter(crew == FALSE) %&gt;%
+  summarise(prob = sum(survived == &quot;yes&quot;) / n())
+
+prob_survived_given_passenger</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["prob"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.3796507"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="titanic-summary" class="section level3">
+<h3>Titanic summary</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Person type</th>
+<th>Probability type</th>
+<th align="right">Probability of surviving</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Member of crew</td>
+<td><span class="math inline">\(p(survived | crew)\)</span></td>
+<td align="right">0.2370787</td>
+</tr>
+<tr class="even">
+<td>Passenger</td>
+<td><span class="math inline">\(p(survived | passenger)\)</span></td>
+<td align="right">0.3796507</td>
+</tr>
+</tbody>
+</table>
+<p>Passengers had a 1.6013703 better chance of surviving than crew.</p>
+<p>Therefore the descendant of one of the surviving crew members and the
+journalist was wrong.</p>
+</div>
+</div>
 </div>
 
 

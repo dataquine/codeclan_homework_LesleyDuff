@@ -6,3 +6,111 @@ output:
     df_print: paged
 ---
 # Probability homework
+
+MVP
+
+## The Titanic
+
+Some time after the disaster a journalist wrote that crew members were more 
+likely to have survived the sinking than passengers. This was disputed by a 
+descendant of one of the surviving crew members, who suggested that the opposite
+was true, i.e. passengers were more likely to have survived than crew.
+
+Calculate the conditional probabilities $p (survived | crew)$
+ and $p (survived | passenger)$ to settle this dispute.
+
+### Examine dataset
+
+```{r}
+# Load in libraries and helper functions ####
+library(gtools)
+library(tidyverse)
+source('prob.R') 
+```
+
+```{r}
+# Read titanic dataset ####
+titanic <- read_csv("data/titanic.csv")
+```
+
+```{r}
+# Examine titanic dataset variables in question ####
+
+glimpse(titanic)
+
+summary(titanic)
+
+titanic %>% 
+  group_by(survived) %>% 
+  summarise(count = n())
+
+titanic %>% 
+  distinct(class) 
+```
+```{r}
+# Create crew column ####
+# Create new column to indicate whether each individual was a passenger (1st,
+# 2nd or 3rd class) or a member of the crew (treat restaurant staff as crew)
+
+titanic <- titanic %>% 
+  mutate(
+    crew = case_when(
+      # passengers are not crew, Crew = FALSE
+     class == "1st" | class == "2nd" | class == "3rd" ~ FALSE,
+     # Crew = TRUE
+     class == "engineering crew" ~ TRUE,
+     class == "victualling crew" ~ TRUE,
+     class == "restaurant staff" ~ TRUE,
+     class == "deck crew" ~ TRUE,
+     TRUE ~ FALSE), 
+    .after = class
+  )
+
+#titanic
+
+titanic %>% 
+  group_by(crew) %>% 
+  summarise(count = n()) %>% 
+  ungroup()
+```
+
+### Calculate prob(survived ∣ crew)
+
+$p(A | B) = \frac{p(A \cap B)}{p(B)}$, 
+$p(survived | crew) = \frac{p(survived \cap crew)}{p(crew)}$
+
+```{r}
+prob_survived_given_crew = titanic %>%
+  filter(crew == TRUE) %>%
+  summarise(prob = sum(survived == "yes") / n())
+
+prob_survived_given_crew
+```
+
+### Calculate prob(survived ∣ passenger)
+
+$p(A | B) = \frac{p(A \cap B)}{p(B)}$, 
+$p(survived | passenger) = \frac{p(survived \cap passenger)}{p(passenger)}$
+
+```{r}
+prob_survived_given_passenger = titanic %>%
+  filter(crew == FALSE) %>%
+  summarise(prob = sum(survived == "yes") / n())
+
+prob_survived_given_passenger
+```
+
+### Titanic summary
+
+| Person type | Probability type | Probability of surviving |
+| ----------- | ---------------- | -----------------------: |
+| Member of crew | $p(survived | crew)$  | `r prob_survived_given_crew$prob` |
+| Passenger | $p(survived | passenger)$ | `r prob_survived_given_passenger$prob` |
+
+Passengers had a 
+`r (prob_survived_given_passenger$prob/prob_survived_given_crew$prob)` 
+better chance of surviving than crew.
+
+Therefore the descendant of one of the surviving crew members and the journalist
+ was wrong.
+
