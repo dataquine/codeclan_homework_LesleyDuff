@@ -1,0 +1,8 @@
+---
+title: "Probability homework"
+subtitle: Week 06, Day 01
+output:
+  html_document:
+    df_print: paged
+---
+# Probability homework
