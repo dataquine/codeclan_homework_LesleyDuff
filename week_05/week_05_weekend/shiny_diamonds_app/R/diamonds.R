@@ -42,3 +42,9 @@ library(ggplot2)
 
 #### Load diamond library from ggplot2 ####
 data(diamonds)
+
+
+#### UI choices for which fill to use ####
+choices_fill_variables <- list("Cut" = "cut", 
+                               "Colour" = "color",
+                               "Clarity" = "clarity")

@@ -10,12 +10,6 @@ library(bslib)
 
 library(tidyverse)
 
-list_fill_variables <- list(
-  "Cut" = "cut",
-  "Colour" = "color",
-  "Clarity" = "clarity"
-)
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   theme = bs_theme(bootswatch = "flatly"),
@@ -32,9 +26,10 @@ ui <- fluidPage(
         choices = unique(diamonds$cut),
         selected = unique(diamonds$cut)
       ),
+      hr(),
       radioButtons("fill_variable",
         label = strong("Fill"),
-        choices = list_fill_variables
+        choices = choices_fill_variables
       ),
       hr(),
       sliderInput(
@@ -74,6 +69,12 @@ ui <- fluidPage(
 
 # Define server logic required to draw plots
 server <- function(input, output, session) {
+  fill_variable <- reactive({
+    # Get the index of the name
+    pos <- match(input$fill_variable, choices_fill_variables)
+    names(choices_fill_variables)[pos]
+  })
+
   carat_range <- reactive({
     cbind(
       input$caretInput[1],
@@ -91,48 +92,31 @@ server <- function(input, output, session) {
 
   # Histogram plot of diamond price by counts ####
   output$histogramPlot <- renderPlot({
-    p <- ggplot(filtered_data(), aes(x = price)) +
+    ggplot(
+      filtered_data(),
+      aes(
+        x = price,
+        fill = !!as.name(input$fill_variable)
+      )
+    ) +
+      geom_histogram(
+        color = "white",
+        binwidth = 1000,
+        boundary = 0
+      ) +
       labs(
         title = "Diamond Price vs. Count",
         x = "\nPrice",
-        y = "Count\n"
+        y = "Count\n",
+        fill = fill_variable()
       ) +
       scale_x_continuous(labels = scales::dollar_format()) +
       scale_y_continuous(labels = scales::comma_format()) +
-      theme_minimal() +
-      scale_fill_brewer(palette = "Blues")
-
-    # Not happy with this section but couldn't
-    # figure out how to get input$fill_variable to work
-    # kept showing red
-    if (input$fill_variable == "cut") {
-      p <- p + geom_histogram(aes(fill = cut),
-        color = "white",
-        binwidth = 1000,
-        boundary = 0
-      ) +
-        labs(fill = "Cut")
-    }
-    if (input$fill_variable == "color") {
-      p <- p + geom_histogram(aes(fill = color),
-        color = "white",
-        binwidth = 1000,
-        boundary = 0
-      ) +
-        labs(fill = "Colour")
-    }
-    if (input$fill_variable == "clarity") {
-      p <- p + geom_histogram(aes(fill = clarity),
-        color = "white",
-        binwidth = 1000,
-        boundary = 0
-      ) +
-        labs(fill = "Clarity")
-    }
-    p
+      scale_fill_brewer(palette = "Blues") +
+      theme_minimal()
   })
 
-  # Generate an HTML table view of the data ----
+  # Table plot of diamond data ####
   output$tablePlot <- DT::renderDataTable({
     filtered_data()
   })
