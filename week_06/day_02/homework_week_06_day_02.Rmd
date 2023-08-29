@@ -81,11 +81,57 @@ dataset, **`r brand_highest_no_phones$numbers_of_phones`**
 
 
 **Question 3.**  
-For your top brand, plot the distribution of phone ratings as a probability density, overlaying a fitted normal distribution. Do you think the normal distribution provides a good model of these ratings?<br>
+For your top brand, plot the distribution of phone ratings as a probability 
+density, overlaying a fitted normal distribution. Do you think the normal 
+distribution provides a good model of these ratings?<br>
+
 <details>
 <summary>**Hint**</summary>
-You will need to calculate the `mean()` and `sd()` of the ratings to plot the appropriate normal distribution. Alternatively, investigate using the `fitdistr()` function in the `MASS` package]
+You will need to calculate the `mean()` and `sd()` of the ratings to plot the 
+appropriate normal distribution. Alternatively, investigate using the 
+`fitdistr()` function in the `MASS` package]
 </details>
+
+
+<!-- N.B. At this point we have not covered the full material so the suggested task 
+for MVP was "For your top brand, plot the distribution of phone ratings as a 
+probability density" -->
+
+```{r}
+mobile_phones %>%
+  select(brand, rating) %>%
+  filter(brand == "Samsung") %>%
+  ggplot(aes(x = rating)) +
+  geom_histogram(aes(y = after_stat(density)),
+    colour = "white",
+    binwidth = 0.1
+  ) +
+  labs(
+    x = "l (ratings)",
+    y = "f_l (probability density)"
+  ) +
+  # ?stat_function
+  stat_function(
+    fun = dunif,
+    args = list(min = 0, max = 6),
+    colour = "red"
+  )
+
+# plot a bit extra below l = 5 and above l = 6 mins
+samsung_ratings <- tibble(
+  l = seq(0, 6, by = 0.001),
+  f_l = dunif(x = l, min = 1, max = 5)
+)
+samsung_ratings %>%
+  ggplot(aes(x = l, y = f_l)) +
+  geom_line(colour = "red") +
+  labs(
+    x = "l (ratings)",
+    y = "f_l (probability density)"
+  )
+```
+
+
 <br>
 
 
