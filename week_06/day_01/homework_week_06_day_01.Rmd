@@ -115,8 +115,8 @@ Passengers had a
 `r (prob_survived_given_passenger$prob/prob_survived_given_crew$prob)` 
 better chance of surviving than crew.
 
-Therefore the descendant of one of the surviving crew members and the journalist
- was wrong.
+Therefore the descendant of one of the surviving crew members was correct and 
+the journalist was wrong.
 
 ## Probability Consolidation Questions
 
