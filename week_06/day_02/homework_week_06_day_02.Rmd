@@ -6,12 +6,12 @@ output:
     toc_float: true
     number_sections: true
     df_print: paged
-    css: ../../../styles.css
+    #css: ../../../styles.css
   pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.align = 'center')
+knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
 ```
 
 You are given a cut of a database containing details of mobile phones and their customer reviews on an online shopping site in file `20190928-items.csv`. Each row in the data corresponds to one model of mobile phone. Use the data to answer the following questions.  
@@ -24,11 +24,58 @@ As part of the MVP we want you not to just run the code but also have a go at **
 **Question 1.**  
 Load the data, `clean_names()` and explore it.
 
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# Load dataset ####
+mobile_phones <- read_csv("data/20190928-items.csv")
+```
+
+
+```{r}
+# Examine dataset
+# View(mobile_phones)
+head(mobile_phones)
+dim(mobile_phones)
+str(mobile_phones)
+
+skimr::skim(mobile_phones)
+
+
+# Brands
+mobile_phones %>%
+  select(brand) %>%
+  distinct(brand) %>%
+  arrange(brand)
+
+# Ratings
+mobile_phones %>%
+  select(rating) %>%
+  distinct(rating) %>%
+  arrange(rating)
+```
+
+
+
+
 <br>
 
 
 **Question 2.**  
 Find the brand with the highest numbers of phones in the dataset.
+
+```{r}
+brand_highest_no_phones <- mobile_phones %>%
+  select(brand) %>%
+  group_by(brand) %>%
+  summarise(numbers_of_phones = n()) %>%
+  ungroup() %>%
+  slice_max(numbers_of_phones, n = 1)
+```
+**`r brand_highest_no_phones$brand`** has the highest numbers of phones in the 
+dataset, **`r brand_highest_no_phones$numbers_of_phones`**
 
 <br>
 
@@ -71,4 +118,3 @@ Here are a few resources:
 * [Short video tutorial](https://www.youtube.com/watch?v=Erze9pNIX8A) (the presenter doesn't use RStudio, but the commands are the same. Just ignore the final comments on hypothesis tests for now.)
 * [Longer video tutorial](https://www.youtube.com/watch?v=smJBsZ4YQZw)
 * [Quantile-Quantile plots - R Base Graphs](http://www.sthda.com/english/wiki/qq-plots-quantile-quantile-plots-r-base-graphs)
-
