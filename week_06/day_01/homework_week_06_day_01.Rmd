@@ -3,7 +3,11 @@ title: "Probability homework"
 subtitle: Week 06, Day 01
 output:
   html_document:
+    toc: true
+    toc_float: false
     df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
 ---
 # Probability homework
 
@@ -114,3 +118,119 @@ better chance of surviving than crew.
 Therefore the descendant of one of the surviving crew members and the journalist
  was wrong.
 
+## Probability Consolidation Questions
+
+### Question 1
+If I roll a six-sided dice once, what is the probability of getting a number less than 5?
+
+```{r}
+# dice 6 faces 1-6
+# = prob(event)=num(event outcomes)/num(all outcomes)
+# p(< 5) 
+
+# set up one roll of a dice
+s_die <- rolldie(1)
+s_die
+
+num_less_than_five <- s_die %>%
+  dplyr::filter(X1 < 5)
+
+# calculate the probability
+prob_num_less_than_five <- nrow(num_less_than_five) / nrow(s_die)
+prob_num_less_than_five
+```
+Probability of getting a number less than 5: `r prob_num_less_than_five`
+
+### Question 2
+
+How many outcomes are there in the sample space of an experiment in which we 
+toss three dice?
+
+```{r}
+# set up three roll of a dice
+s_die <- rolldie(3)
+s_die
+
+num_outcomes_three_dice = nrow(s_die)
+num_outcomes_three_dice
+```
+When we toss three dice there are `r num_outcomes_three_dice` possible outcomes.
+
+### Question 3
+
+In an experiment where we roll four dice:
+
+i how many outcomes are in the event where the total of the four dice equals 5
+, 6 or 7)?
+
+Hint
+For part i, rowSums(.) may help you setup up the necessary random variable 
+total (or you can use pivot_longer())
+
+```{r}
+# set up four roll of a dice
+s_die <- rolldie(4)
+
+total_four_dice <- s_die %>% 
+  mutate(dice_total = rowSums(.)) %>% 
+  filter(dice_total %in% 5:7)
+
+outcomes_four_dice_five_to_seven = nrow(total_four_dice)
+```
+
+Where the total of the four dice equals 5, 6 or 7 there are 
+`r outcomes_four_dice_five_to_seven` outcomes.
+
+ii what is the probability of this event?
+```{r}
+# p(event)=n(event outcomes)/n(all outcomes)
+# p(four dice equals 5, 6 or 7 )
+outcomes_four_dice = nrow(s_die)
+prob_four_dice_five_to_seven = outcomes_four_dice_five_to_seven/outcomes_four_dice
+prob_four_dice_five_to_seven
+```
+Probability of four dice equals 5, 6 or 7 = `r prob_four_dice_five_to_seven`.
+
+We assume equally likely outcomes of a dice throw.
+
+### Question 4
+
+Five chairs are placed in a row in a room, along with five people of differing 
+height. The people sit down randomly on the chairs. What is the probability that they sit in order of decreasing height, left to right?
+
+Hint
+This is an arrangement where order matters. Of all the possible arrangements, 
+how many are correct?
+
+```{r}
+# Five chairs
+# Five people
+# Order matters = permutation
+
+# 1 2 3 4 5 
+#p(highest height)= 1/5, 1/4, 1/3, 1/2, 1
+
+library(gtools)
+
+people <- c("Alice (1)", "Bob(2)", "Carole(3)", "David(4)", "Elaine(5)")
+# Choose one at a time, r = 1
+# Don't replace an employee once chosen: repeats.allowed = FALSE
+seated_people <- as_tibble(permutations(n = length(people), 
+                                  r = 5, 
+                                  v = people, 
+                                  repeats.allowed = FALSE))
+seated_people
+
+# how many permutations do we have?
+total_permutations = nrow(seated_people)
+total_permutations
+
+# probability that they sit in order of decreasing height
+# {(5,4,3,2,1),... }
+# the first one is in order of decreasing height
+# p(event)=n(event outcomes)/n(all outcomes)
+# p(order of decreasing height, left to right)
+prob_decreasing_height_left_to_right = 1 / total_permutations
+```
+Probability that they sit in order of decreasing height, left to right: 
+`r prob_decreasing_height_left_to_right`
