@@ -102,7 +102,9 @@ library(infer)
 
 sample_50 <- heart %>%
   # ?rep_sample_n
-  rep_sample_n(size = 50, reps = 1)
+  rep_sample_n(size = 50, reps = 1) %>% 
+#  get rid of error '-' only defined for equally-sized data frames
+  ungroup()
 
 sample_50
 
@@ -110,7 +112,7 @@ summary_sample_50 <- sample_50 %>%
   summarise(
     mean_thalach = mean(thalach), 
     prop_exang = sum(exang == 1) / n()
-  ) 
+   ) 
 
 summary_sample_50
 ```
@@ -119,11 +121,29 @@ summary_sample_50
 6. What are the sampling errors of these point estimates?<br>[**Hint** - 
 remember a *sampling error* is defined as the difference between a 
 *point estimate* drawn from a sample, and a *population parameter*]  
+```{r}
+# Sampling error = point estimate - population parameter
+sampling_error = summary_sample_50 - summary_popn
+sampling_error
+```
 
 7. Now we're going to repeatedly sample 50-patients from the population and 
 build up sampling distributions for the `mean_thalach` and `prop_exang` point 
 estimates. Take 5000 samples and store the sampling distributions in a variable
 `rep_sample_50`.<br>[**Hint** - again, use `rep_sample_n()` to do this.]  
+```{r}
+sample_50_5000 <- heart %>%
+  rep_sample_n(size = 50, reps = 5000)
+
+rep_sample_50 <- sample_50_5000 %>%
+  summarise(
+    mean_thalach = mean(thalach), 
+    prop_exang = sum(exang == 1) / n()
+   )
+
+rep_sample_50
+```
+
   
 8. Visualise the sampling distributions of `mean_thalach` and `prop_exang` as 
 histograms. How normal do the sampling distributions look?  
