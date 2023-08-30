@@ -97,6 +97,24 @@ summary_popn
 point estimates for mean `thalach` and proportion of `exang` from this sample 
 (let's call these `mean_thalach` and `prop_exang` going forward).<br>
 [**Hint** - use `rep_sample_n()` from the `infer` package to do this]  
+```{r}
+library(infer)
+
+sample_50 <- heart %>%
+  # ?rep_sample_n
+  rep_sample_n(size = 50, reps = 1)
+
+sample_50
+
+summary_sample_50 <- sample_50 %>%
+  summarise(
+    mean_thalach = mean(thalach), 
+    prop_exang = sum(exang == 1) / n()
+  ) 
+
+summary_sample_50
+```
+
   
 6. What are the sampling errors of these point estimates?<br>[**Hint** - 
 remember a *sampling error* is defined as the difference between a 
