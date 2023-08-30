@@ -2762,6 +2762,93 @@ border-radius: 0px;
 
 <div id="sampling-distributions-and-standard-errors---mini-lab" class="section level1">
 <h1>Sampling distributions and standard errors - mini lab</h1>
+<ol style="list-style-type: decimal">
+<li>Load and explore the data held in <code>heart.csv</code>. A data
+dictionary is also available.</li>
+</ol>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>heart &lt;- read_csv(&quot;data/heart.csv&quot;)</code></pre>
+<pre><code>## Rows: 303 Columns: 14
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (14): age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpea...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>head(heart)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["age"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["sex"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["cp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["trestbps"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["chol"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["fbs"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["restecg"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["thalach"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["exang"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["oldpeak"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["slope"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["ca"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["thal"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["target"],"name":[14],"type":["dbl"],"align":["right"]}],"data":[{"1":"63","2":"1","3":"3","4":"145","5":"233","6":"1","7":"0","8":"150","9":"0","10":"2.3","11":"0","12":"0","13":"1","14":"1"},{"1":"37","2":"1","3":"2","4":"130","5":"250","6":"0","7":"1","8":"187","9":"0","10":"3.5","11":"0","12":"0","13":"2","14":"1"},{"1":"41","2":"0","3":"1","4":"130","5":"204","6":"0","7":"0","8":"172","9":"0","10":"1.4","11":"2","12":"0","13":"2","14":"1"},{"1":"56","2":"1","3":"1","4":"120","5":"236","6":"0","7":"1","8":"178","9":"0","10":"0.8","11":"2","12":"0","13":"2","14":"1"},{"1":"57","2":"0","3":"0","4":"120","5":"354","6":"0","7":"1","8":"163","9":"1","10":"0.6","11":"2","12":"0","13":"2","14":"1"},{"1":"57","2":"1","3":"0","4":"140","5":"192","6":"0","7":"1","8":"148","9":"0","10":"0.4","11":"1","12":"0","13":"1","14":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>glimpse(heart)</code></pre>
+<pre><code>## Rows: 303
+## Columns: 14
+## $ age      &lt;dbl&gt; 63, 37, 41, 56, 57, 57, 56, 44, 52, 57, 54, 48, 49, 64, 58, 5…
+## $ sex      &lt;dbl&gt; 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1…
+## $ cp       &lt;dbl&gt; 3, 2, 1, 1, 0, 0, 1, 1, 2, 2, 0, 2, 1, 3, 3, 2, 2, 3, 0, 3, 0…
+## $ trestbps &lt;dbl&gt; 145, 130, 130, 120, 120, 140, 140, 120, 172, 150, 140, 130, 1…
+## $ chol     &lt;dbl&gt; 233, 250, 204, 236, 354, 192, 294, 263, 199, 168, 239, 275, 2…
+## $ fbs      &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0…
+## $ restecg  &lt;dbl&gt; 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1…
+## $ thalach  &lt;dbl&gt; 150, 187, 172, 178, 163, 148, 153, 173, 162, 174, 160, 139, 1…
+## $ exang    &lt;dbl&gt; 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…
+## $ oldpeak  &lt;dbl&gt; 2.3, 3.5, 1.4, 0.8, 0.6, 0.4, 1.3, 0.0, 0.5, 1.6, 1.2, 0.2, 0…
+## $ slope    &lt;dbl&gt; 0, 0, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 0, 2, 2, 1…
+## $ ca       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0…
+## $ thal     &lt;dbl&gt; 1, 2, 2, 2, 2, 1, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3…
+## $ target   &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Plot a histogram and/or boxplot for <code>thalach</code> (maximum
+heart rate achieved in stress testing). How normal is the
+distribution?</p></li>
+<li><p>Also plot a barplot of <code>exang</code> (whether the patient
+displayed exercise induced angina)</p></li>
+<li><p>Now calculate population parameters: what is the mean
+<code>thalach</code> in the population. What proportion of patients have
+exercise induced angina (<code>exang</code>)?</p></li>
+<li><p>Now take a single sample of 50-patients from the population and
+calculate point estimates for mean <code>thalach</code> and proportion
+of <code>exang</code> from this sample (let’s call these
+<code>mean_thalach</code> and <code>prop_exang</code> going
+forward).<br> [<strong>Hint</strong> - use <code>rep_sample_n()</code>
+from the <code>infer</code> package to do this]</p></li>
+<li><p>What are the sampling errors of these point
+estimates?<br>[<strong>Hint</strong> - remember a <em>sampling
+error</em> is defined as the difference between a <em>point
+estimate</em> drawn from a sample, and a <em>population
+parameter</em>]</p></li>
+<li><p>Now we’re going to repeatedly sample 50-patients from the
+population and build up sampling distributions for the
+<code>mean_thalach</code> and <code>prop_exang</code> point estimates.
+Take 5000 samples and store the sampling distributions in a variable
+<code>rep_sample_50</code>.<br>[<strong>Hint</strong> - again, use
+<code>rep_sample_n()</code> to do this.]</p></li>
+<li><p>Visualise the sampling distributions of <code>mean_thalach</code>
+and <code>prop_exang</code> as histograms. How normal do the sampling
+distributions look?</p></li>
+<li><p>Obtain standard errors of the sampling distribution of
+<code>mean_thalach</code> and <code>prop_exang</code> directly as the
+standard deviations of the sampling distributions held in
+<code>rep_sample_50</code></p></li>
+<li><p>Repeat steps 7. and 9. (omitting step 8.) once more with samples
+of size 100-patients, and again with samples of size 200-patients. How
+do the standard errors of <code>mean_thalach</code> and
+<code>prop_exang</code> change as sample size increases? Does the
+<em>uncertainty</em> in the calculated statistics <em>increase</em> or
+<em>decrease</em> as sample size increases?<br>[<strong>Hint</strong> -
+it’s OK to copy, paste and alter code to do this!]</p></li>
+</ol>
 </div>
 
 
