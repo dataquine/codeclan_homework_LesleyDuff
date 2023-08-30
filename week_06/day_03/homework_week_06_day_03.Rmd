@@ -178,6 +178,17 @@ This is a unimodal distribution.
 9. Obtain standard errors of the sampling distribution of `mean_thalach` and 
 `prop_exang` directly as the standard deviations of the sampling distributions 
 held in `rep_sample_50`  
+```{r}
+std_errs <- rep_sample_50 %>%
+  summarise(
+    se_mean_thalach = sd(mean_thalach),
+    se_prop_exang = sd(prop_exang)
+  )
+
+std_errs
+```
+
+
   
 10. Repeat steps 7. and 9. (omitting step 8.) once more with samples of size 
 100-patients, and again with samples of size 200-patients. How do the standard 
