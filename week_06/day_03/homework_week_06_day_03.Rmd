@@ -23,17 +23,75 @@ heart <- read_csv("data/heart.csv")
 
 head(heart)
 glimpse(heart)
+str(heart)
 ```
 
   
 2. Plot a histogram and/or boxplot for `thalach` (maximum heart rate achieved in
-stress testing). How normal is the distribution?  
+stress testing).
+```{r}
+heart %>% 
+  ggplot(aes(x = thalach)) +
+    geom_histogram(colour = "white", 
+                   fill = "steelblue",
+                   binwidth = 5) +
+    labs(
+      title = "Maximum heart rate achieved in stress testing",
+      x = "\nMaximum heart rate",
+      y = "Count\n"
+    ) +
+  theme_minimal()
+
+heart %>% 
+  ggplot(aes(x = thalach)) +
+    geom_boxplot() +
+    labs(
+      title = "Maximum heart rate achieved in stress testing",
+      x = "\nMaximum heart rate"#
+    ) +
+  theme_minimal()
+```
+ How normal is the distribution? 
+ 
+```{r}
+library(e1071)
+
+heart %>%
+  summarise(skewness = skewness(thalach, type = 1))
+```
+ 
+ This is a moderately left-skewed distribution.
   
 3. Also plot a barplot of `exang` (whether the patient displayed exercise 
 induced angina)  
-  
+```{r}
+str(heart)
+  heart %>% 
+    mutate(exang = as.logical(exang)) %>% 
+  ggplot(aes(x = exang, fill = exang)) +
+    geom_bar(aes(fill = exang)) +
+    labs(
+      title = "Whether the patient displayed exercise induced angina",
+      x = "\nPatient displayed exercise induced angina",
+      fill = "Displayed angina"
+    ) +
+  theme_minimal()
+```
+
 4. Now calculate population parameters: what is the mean `thalach` in the 
-population. What proportion of patients have exercise induced angina (`exang`)?  
+population. What proportion of patients have exercise induced angina (`exang`)? 
+```{r}
+summary_popn <- heart %>%
+  summarise(
+    mean_thalach = mean(thalach), 
+    prop_exang = sum(exang == 1) / n()
+  )
+
+summary_popn
+```
+* Mean `thalach` in the population: `r summary_popn$mean_thalach`.
+* Proportion of patients with exercise induced angina (`exang`): `r summary_popn$prop_exang`.
+
   
 5. Now take a single sample of 50-patients from the population and calculate 
 point estimates for mean `thalach` and proportion of `exang` from this sample 
