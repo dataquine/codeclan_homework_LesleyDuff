@@ -188,8 +188,6 @@ std_errs <- rep_sample_50 %>%
 std_errs
 ```
 
-
-  
 10. Repeat steps 7. and 9. (omitting step 8.) once more with samples of size 
 100-patients, and again with samples of size 200-patients. How do the standard 
 errors of `mean_thalach` and `prop_exang` change as sample size increases? Does 
@@ -197,7 +195,50 @@ the *uncertainty* in the calculated statistics *increase* or *decrease* as
 sample size increases?<br>[**Hint** - it's OK to copy, paste and alter code to 
 do this!]  
 
+```{r}
+sample_100_5000 <- heart %>%
+  rep_sample_n(size = 100, reps = 5000)
 
+rep_sample_100 <- sample_100_5000 %>%
+  summarise(
+    mean_thalach = mean(thalach), 
+    prop_exang = sum(exang == 1) / n()
+   )
 
+rep_sample_100
+
+std_errs_100 <- rep_sample_100 %>%
+  summarise(
+    se_mean_thalach = sd(mean_thalach),
+    se_prop_exang = sd(prop_exang)
+  )
+
+std_errs_100
+
+sample_200_5000 <- heart %>%
+  rep_sample_n(size = 200, reps = 5000)
+
+rep_sample_200 <- sample_200_5000 %>%
+  summarise(
+    mean_thalach = mean(thalach), 
+    prop_exang = sum(exang == 1) / n()
+   )
+
+rep_sample_200
+
+std_errs_200 <- rep_sample_200 %>%
+  summarise(
+    se_mean_thalach = sd(mean_thalach),
+    se_prop_exang = sd(prop_exang)
+  )
+
+std_errs_200
+```
+
+std_errs_100:`r std_errs_100` vs std_errs_200:`r std_errs_200`.
+
+Standard error roughly halves as the sample size doubles.
+
+The smaller the standard error, the more representative the sample will be of the overall population. More certain = less uncertain.
 
 
