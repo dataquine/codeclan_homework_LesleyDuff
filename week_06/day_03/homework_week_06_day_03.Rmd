@@ -1,0 +1,18 @@
+---
+title: "Sampling distributions and standard errors - mini lab"
+subtitle: "NB Homework substitution instead of usual day 3"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
+---
+# Sampling distributions and standard errors - mini lab
+
+
+
+
+
+

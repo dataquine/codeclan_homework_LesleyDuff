@@ -1,0 +1,58 @@
+---
+title: "Sampling distributions and standard errors - mini lab"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+    css: ../../../styles.css
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = 'center')
+```
+
+**Duration - 45 minutes**<br>
+
+<hr>
+
+# Introduction 
+
+Let's practice drawing and analysing sampling distributions from a larger dataset that we will treat as a population. Slightly morbidly, we're going to use data derived from a study of heart disease!
+
+<br>
+<div class='emphasis'>
+Remember throughout the following tasks that this is something of a 'fake' situation:
+
+* Normally, we would have a single sample of a given size drawn from a population, ideally containing *as much data as possible*.
+* Here, we're treating a sample *as if it were a population*, and repeatedly drawing smaller samples from it. We're doing this for educational purposes, to let you see what would happen if you **could** sample a population multiple times.
+
+</div>
+<br>
+
+<hr>
+
+# MVP
+
+1. Load and explore the data held in `heart.csv`. A data dictionary is also available.  
+  
+2. Plot a histogram and/or boxplot for `thalach` (maximum heart rate achieved in stress testing). How normal is the distribution?  
+  
+3. Also plot a barplot of `exang` (whether the patient displayed exercise induced angina)  
+  
+4. Now calculate population parameters: what is the mean `thalach` in the population. What proportion of patients have exercise induced angina (`exang`)?  
+  
+5. Now take a single sample of 50-patients from the population and calculate point estimates for mean `thalach` and proportion of `exang` from this sample (let's call these `mean_thalach` and `prop_exang` going forward).<br>[**Hint** - use `rep_sample_n()` from the `infer` package to do this]  
+  
+6. What are the sampling errors of these point estimates?<br>[**Hint** - remember a *sampling error* is defined as the difference between a *point estimate* drawn from a sample, and a *population parameter*]  
+
+7. Now we're going to repeatedly sample 50-patients from the population and build up sampling distributions for the `mean_thalach` and `prop_exang` point estimates. Take 5000 samples and store the sampling distributions in a variable `rep_sample_50`.<br>[**Hint** - again, use `rep_sample_n()` to do this.]  
+  
+8. Visualise the sampling distributions of `mean_thalach` and `prop_exang` as histograms. How normal do the sampling distributions look?  
+
+9. Obtain standard errors of the sampling distribution of `mean_thalach` and `prop_exang` directly as the standard deviations of the sampling distributions held in `rep_sample_50`  
+  
+10. Repeat steps 7. and 9. (omitting step 8.) once more with samples of size 100-patients, and again with samples of size 200-patients. How do the standard errors of `mean_thalach` and `prop_exang` change as sample size increases? Does the *uncertainty* in the calculated statistics *increase* or *decrease* as sample size increases?<br>[**Hint** - it's OK to copy, paste and alter code to do this!]  
