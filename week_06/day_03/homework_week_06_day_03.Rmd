@@ -144,9 +144,36 @@ rep_sample_50 <- sample_50_5000 %>%
 rep_sample_50
 ```
 
-  
 8. Visualise the sampling distributions of `mean_thalach` and `prop_exang` as 
 histograms. How normal do the sampling distributions look?  
+```{r}
+rep_sample_50 %>% 
+  ggplot(aes(x = mean_thalach)) +
+    geom_histogram(colour = "white", 
+                   fill = "steelblue") +
+    labs(
+      title = "Mean heart rate achieved in stress testing",
+      x = "\nMean heart rate",
+      y = "Count\n"
+    ) +
+  theme_minimal()
+```
+
+This is a unimodal distribution.
+
+```{r}
+rep_sample_50 %>% 
+  ggplot(aes(x = prop_exang)) +
+    geom_histogram(colour = "white", 
+                   fill = "steelblue") +
+    labs(
+      title = "Proportion of `exang` heart rate achieved in stress testing",
+      x = "\nProportion of `exang`",
+      y = "Count\n"
+    ) +
+  theme_minimal()
+```
+This is a unimodal distribution.
 
 9. Obtain standard errors of the sampling distribution of `mean_thalach` and 
 `prop_exang` directly as the standard deviations of the sampling distributions 
