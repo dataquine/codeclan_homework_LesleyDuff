@@ -112,7 +112,7 @@ mobile_phones %>%
     x = "l (ratings)",
     y = "f_l (probability density)"
   ) +
-  # ?stat_function
+  # ?stat_function ?dunif
   stat_function(
     fun = dunif,
     args = list(min = 0, max = 6),
