@@ -73,6 +73,8 @@ brand_highest_no_phones <- mobile_phones %>%
   summarise(numbers_of_phones = n()) %>%
   ungroup() %>%
   slice_max(numbers_of_phones, n = 1)
+
+brand_highest_no_phones
 ```
 **`r brand_highest_no_phones$brand`** has the highest numbers of phones in the 
 dataset, **`r brand_highest_no_phones$numbers_of_phones`**

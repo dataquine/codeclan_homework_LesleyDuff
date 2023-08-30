@@ -3048,7 +3048,14 @@ Find the brand with the highest numbers of phones in the dataset.</p>
   group_by(brand) %&gt;%
   summarise(numbers_of_phones = n()) %&gt;%
   ungroup() %&gt;%
-  slice_max(numbers_of_phones, n = 1)</code></pre>
+  slice_max(numbers_of_phones, n = 1)
+
+brand_highest_no_phones</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["brand"],"name":[1],"type":["chr"],"align":["left"]},{"label":["numbers_of_phones"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Samsung","2":"397"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 <p><strong>Samsung</strong> has the highest numbers of phones in the
 dataset, <strong>397</strong></p>
 <p><br></p>
