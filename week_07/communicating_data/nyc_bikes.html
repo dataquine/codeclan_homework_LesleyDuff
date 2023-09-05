@@ -3063,8 +3063,31 @@ head(nyc_bikes_df)</code></pre>
 # birth_year is numeric
 # Mininmum Start date: 2018-01-01 21:19:01.611
 # Maximum Start date: 2018-12-31 09:08:35.776</code></pre>
+<pre class="r"><code># Hires per bike and bike count ----
+# Break down how many hires each bike had
+hires_per_bike &lt;- nyc_bikes_df %&gt;% 
+  #?count
+ # bike_count = 
+  count(bike_id, name = &quot;hire_count&quot;, sort = TRUE)
+
+bike_count &lt;- nrow(hires_per_bike)</code></pre>
 <div id="pattern-of-bike-hires" class="section level2">
 <h2>Pattern of bike hires</h2>
+<pre class="r"><code># Number of stations  -----
+hires_start_station &lt;- nyc_bikes_df %&gt;% 
+  distinct(start_station)  %&gt;% 
+  arrange()
+
+hires_end_station &lt;- nyc_bikes_df %&gt;% 
+  distinct(end_station)  %&gt;% 
+  arrange()
+  
+hires_start_station_count &lt;- nrow(hires_start_station)
+hires_end_station_count &lt;- nrow(hires_end_station)</code></pre>
+<p><strong>10</strong> different bikes in the Citi Bike fleet were hired
+for journeys.</p>
+<p><strong>52</strong> docking stations were used to start</p>
+<p><strong>55</strong> docking stations were used to stop</p>
 <pre class="r"><code>nyc_bikes_df &lt;- nyc_bikes_df %&gt;%
   mutate(
     hour_start_time = hour(start_time),
@@ -3075,13 +3098,27 @@ head(nyc_bikes_df)</code></pre>
     minute_stop_time = minute(stop_time),
     day_stop_time = day(stop_time),
     month_stop_time = month(stop_time, label = TRUE, abbr = FALSE),
+    date_start_time = ymd(start_time),
+    date_stop_time = ymd(stop_time),
 
-    .after = start_time
-  )
+    journey_difftime = stop_time - start_time,
 
-
-
-nyc_bikes_df %&gt;% 
+    .after = stop_time
+  ) %&gt;% 
+  arrange(start_time)</code></pre>
+<pre><code>## Warning: There were 2 warnings in `mutate()`.
+## The first warning was:
+## ℹ In argument: `date_start_time = ymd(start_time)`.
+## Caused by warning:
+## ! All formats failed to parse. No formats found.
+## ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</code></pre>
+<pre class="r"><code>head(nyc_bikes_df)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["bike_id"],"name":[1],"type":["fct"],"align":["left"]},{"label":["start_time"],"name":[2],"type":["dttm"],"align":["right"]},{"label":["stop_time"],"name":[3],"type":["dttm"],"align":["right"]},{"label":["hour_start_time"],"name":[4],"type":["int"],"align":["right"]},{"label":["minute_start_time"],"name":[5],"type":["int"],"align":["right"]},{"label":["day_start_time"],"name":[6],"type":["int"],"align":["right"]},{"label":["month_start_time"],"name":[7],"type":["ord"],"align":["right"]},{"label":["hour_stop_time"],"name":[8],"type":["int"],"align":["right"]},{"label":["minute_stop_time"],"name":[9],"type":["int"],"align":["right"]},{"label":["day_stop_time"],"name":[10],"type":["int"],"align":["right"]},{"label":["month_stop_time"],"name":[11],"type":["ord"],"align":["right"]},{"label":["date_start_time"],"name":[12],"type":["date"],"align":["right"]},{"label":["date_stop_time"],"name":[13],"type":["date"],"align":["right"]},{"label":["journey_difftime"],"name":[14],"type":["drtn"],"align":["right"]},{"label":["start_station"],"name":[15],"type":["fct"],"align":["left"]},{"label":["start_lat"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["start_long"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["end_station"],"name":[18],"type":["fct"],"align":["left"]},{"label":["end_lat"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["end_long"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["type"],"name":[21],"type":["fct"],"align":["left"]},{"label":["birth_year"],"name":[22],"type":["dbl"],"align":["right"]},{"label":["gender"],"name":[23],"type":["fct"],"align":["left"]}],"data":[{"1":"31735","2":"2018-01-01 21:19:01.611","3":"2018-01-01 21:20:41.448","4":"21","5":"19","6":"1","7":"January","8":"21","9":"20","10":"1","11":"January","12":"<NA>","13":"<NA>","14":"1.663967 mins","15":"3187","16":"40.72112","17":"-74.03805","18":"3275","19":"40.71836","20":"-74.03891","21":"Subscriber","22":"1983","23":"Female"},{"1":"31681","2":"2018-01-02 08:43:56.371","3":"2018-01-02 08:48:53.046","4":"8","5":"43","6":"2","7":"January","8":"8","9":"48","10":"2","11":"January","12":"<NA>","13":"<NA>","14":"4.944583 mins","15":"3209","16":"40.72418","17":"-74.05066","18":"3186","19":"40.71959","20":"-74.04312","21":"Subscriber","22":"1986","23":"Male"},{"1":"31735","2":"2018-01-02 18:56:56.579","3":"2018-01-02 18:59:54.615","4":"18","5":"56","6":"2","7":"January","8":"18","9":"59","10":"2","11":"January","12":"<NA>","13":"<NA>","14":"2.967267 mins","15":"3275","16":"40.71836","17":"-74.03891","18":"3186","19":"40.71959","20":"-74.04312","21":"Subscriber","22":"1985","23":"Male"},{"1":"31735","2":"2018-01-02 19:24:19.793","3":"2018-01-02 19:30:36.359","4":"19","5":"24","6":"2","7":"January","8":"19","9":"30","10":"2","11":"January","12":"<NA>","13":"<NA>","14":"6.276100 mins","15":"3186","16":"40.71959","17":"-74.04312","18":"3209","19":"40.72418","20":"-74.05066","21":"Subscriber","22":"1978","23":"Female"},{"1":"31735","2":"2018-01-03 08:25:54.519","3":"2018-01-03 08:28:32.619","4":"8","5":"25","6":"3","7":"January","8":"8","9":"28","10":"3","11":"January","12":"<NA>","13":"<NA>","14":"2.635017 mins","15":"3209","16":"40.72418","17":"-74.05066","18":"3211","19":"40.72153","20":"-74.04630","21":"Subscriber","22":"1983","23":"Female"},{"1":"31735","2":"2018-01-03 08:29:40.473","3":"2018-01-03 08:36:11.023","4":"8","5":"29","6":"3","7":"January","8":"8","9":"36","10":"3","11":"January","12":"<NA>","13":"<NA>","14":"6.509183 mins","15":"3211","16":"40.72153","17":"-74.04630","18":"3184","19":"40.71415","20":"-74.03355","21":"Subscriber","22":"1977","23":"Male"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>nyc_bikes_df %&gt;% 
   ggplot(aes(x = start_time)) +
  # geom_histogram(color = &quot;white&quot;, 
   #               fill = &quot;steelblue&quot;,

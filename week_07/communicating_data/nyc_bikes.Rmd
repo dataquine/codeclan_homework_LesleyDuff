@@ -40,7 +40,43 @@ skim(nyc_bikes_df)
 
 ```
 
+```{r}
+# Hires per bike and bike count ----
+# Break down how many hires each bike had
+hires_per_bike <- nyc_bikes_df %>% 
+  #?count
+ # bike_count = 
+  count(bike_id, name = "hire_count", sort = TRUE)
+
+bike_count <- nrow(hires_per_bike)
+```
+
 ## Pattern of bike hires
+
+```{r}
+# Number of stations  -----
+hires_start_station <- nyc_bikes_df %>% 
+  distinct(start_station)  %>% 
+  arrange()
+
+hires_end_station <- nyc_bikes_df %>% 
+  distinct(end_station)  %>% 
+  arrange()
+  
+hires_start_station_count <- nrow(hires_start_station)
+hires_end_station_count <- nrow(hires_end_station)
+```
+
+**`r bike_count`** different bikes in the Citi Bike fleet were hired for 
+journeys.
+
+**`r hires_start_station_count`** docking stations were used to start
+
+**`r hires_end_station_count`** docking stations were used to stop
+
+
+
+
 
 ```{r}
 nyc_bikes_df <- nyc_bikes_df %>%
@@ -53,10 +89,16 @@ nyc_bikes_df <- nyc_bikes_df %>%
     minute_stop_time = minute(stop_time),
     day_stop_time = day(stop_time),
     month_stop_time = month(stop_time, label = TRUE, abbr = FALSE),
+    date_start_time = ymd(start_time),
+    date_stop_time = ymd(stop_time),
 
-    .after = start_time
-  )
+    journey_difftime = stop_time - start_time,
 
+    .after = stop_time
+  ) %>% 
+  arrange(start_time)
+
+head(nyc_bikes_df)
 
 
 nyc_bikes_df %>% 
