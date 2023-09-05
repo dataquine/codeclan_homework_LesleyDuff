@@ -1,6 +1,18 @@
 ---
 title: "NYC Citi Bike trips"
+subtitle: "Communicating Data"
 output:
   html_document:
+    toc: true
+    toc_float: true
     df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
 ---
+# Introduction
+
+[*Citi Bike*](https://ride.citibikenyc.com/about) is the largest [bike share system](https://en.wikipedia.org/wiki/Bicycle-sharing_system) in the USA and consists of a fleet of bikes available to users at docking stations throughout New York City. Bikes can be returned to any other station. Citi Bike is available for use 24 hours/day, 7 days/week, 365 days/year.
+
+This report uses a sample dataset from NYC Citi Bike usage of 10 bikes throughout 2018. The data includes event data on each trip, including the trip's start and end times and locations. 
+
+
