@@ -22,6 +22,7 @@ library(tsibbledata)
 ```
 
 ```{r}
+# Explore dataset -----
 # ?nyc_bikes comes from the tsibbledata package
 nyc_bikes_df <- nyc_bikes
 
@@ -34,14 +35,42 @@ skim(nyc_bikes_df)
 # We have no NAs 
 # Datetime columns: start_time, stop_time
 # birth_year is numeric
+# Mininmum Start date: 2018-01-01 21:19:01.611
+# Maximum Start date: 2018-12-31 09:08:35.776
 
 ```
 
-## The pattern of bike hires
+## Pattern of bike hires
+
+```{r}
+nyc_bikes_df <- nyc_bikes_df %>%
+  mutate(
+    hour_start_time = hour(start_time),
+    minute_start_time = minute(start_time),
+    day_start_time = day(start_time),
+    month_start_time = month(start_time, label = TRUE, abbr = FALSE),
+    hour_stop_time = hour(stop_time),
+    minute_stop_time = minute(stop_time),
+    day_stop_time = day(stop_time),
+    month_stop_time = month(stop_time, label = TRUE, abbr = FALSE),
+
+    .after = start_time
+  )
+
+
+
+nyc_bikes_df %>% 
+  ggplot(aes(x = start_time)) +
+ # geom_histogram(color = "white", 
+  #               fill = "steelblue",
+   #              bins = 4) +
+  theme_minimal()
+```
+
 
 over time (e.g. within a year, month, week, or day)?
 
-## bike rider demographics
+## Bike rider demographics
 
 Do bike hire patterns differ between bike rider demographics? (e.g. gender, type of trip, age)
 Any other insights?
