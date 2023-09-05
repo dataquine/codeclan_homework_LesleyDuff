@@ -1,0 +1,24 @@
+---
+title: "Hypothesis tests & probability - homework"
+output:
+  html_document:
+    df_print: paged
+---
+# MVP
+
+## Hypothesis testing - practical
+
+You work for an animal conservation organisation and are looking to do some investigating into some of the animals to provide evidence for some projects you are looking to run. 
+
+In this homework we'll use the `msleep` data set provided in the `ggplot` package. It concerns the sleeping patterns of various types of mammal.
+
+```{r, message = FALSE, warning=FALSE}
+library(tidyverse)
+data(msleep)
+```
+
+<br>
+
+**Question 1.**  
+Explore the dataset and familiarise yourself with it.
+
