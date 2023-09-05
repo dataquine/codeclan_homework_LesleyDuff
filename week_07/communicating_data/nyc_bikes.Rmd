@@ -1,0 +1,6 @@
+---
+title: "NYC Citi Bike trips"
+output:
+  html_document:
+    df_print: paged
+---
