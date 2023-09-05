@@ -2769,6 +2769,306 @@ hours/day, 7 days/week, 365 days/year.</p>
 <p>This report uses a sample dataset from NYC Citi Bike usage of 10
 bikes throughout 2018. The data includes event data on each trip,
 including the trip’s start and end times and locations.</p>
+<pre class="r"><code>library(skimr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(tsibbledata)</code></pre>
+<pre class="r"><code># ?nyc_bikes comes from the tsibbledata package
+nyc_bikes_df &lt;- nyc_bikes
+
+head(nyc_bikes_df)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["bike_id"],"name":[1],"type":["fct"],"align":["left"]},{"label":["start_time"],"name":[2],"type":["dttm"],"align":["right"]},{"label":["stop_time"],"name":[3],"type":["dttm"],"align":["right"]},{"label":["start_station"],"name":[4],"type":["fct"],"align":["left"]},{"label":["start_lat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["start_long"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["end_station"],"name":[7],"type":["fct"],"align":["left"]},{"label":["end_lat"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["end_long"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["type"],"name":[10],"type":["fct"],"align":["left"]},{"label":["birth_year"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["gender"],"name":[12],"type":["fct"],"align":["left"]}],"data":[{"1":"26301","2":"2018-02-26 19:11:03.707","3":"2018-02-26 19:15:40.805","4":"3186","5":"40.71959","6":"-74.04312","7":"3203","8":"40.72760","9":"-74.04425","10":"Subscriber","11":"1986","12":"Male"},{"1":"26301","2":"2018-02-27 07:52:49.151","3":"2018-02-27 07:58:13.075","4":"3203","5":"40.72760","6":"-74.04425","7":"3202","8":"40.72722","9":"-74.03376","10":"Subscriber","11":"1979","12":"Male"},{"1":"26301","2":"2018-02-27 12:03:27.595","3":"2018-02-27 12:04:54.122","4":"3202","5":"40.72722","6":"-74.03376","7":"3638","8":"40.72429","9":"-74.03548","10":"Subscriber","11":"1963","12":"Male"},{"1":"26301","2":"2018-02-27 13:53:51.996","3":"2018-02-27 14:21:04.941","4":"3638","5":"40.72429","6":"-74.03548","7":"3638","8":"40.72429","9":"-74.03548","10":"Subscriber","11":"1984","12":"Male"},{"1":"26301","2":"2018-02-27 14:30:42.846","3":"2018-02-27 14:33:11.381","4":"3638","5":"40.72429","6":"-74.03548","7":"3187","8":"40.72112","9":"-74.03805","10":"Subscriber","11":"1980","12":"Male"},{"1":"26301","2":"2018-02-27 16:31:04.002","3":"2018-02-27 16:33:27.957","4":"3187","5":"40.72112","6":"-74.03805","7":"3638","8":"40.72429","9":"-74.03548","10":"Subscriber","11":"1980","12":"Male"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>glimpse(nyc_bikes_df)</code></pre>
+<pre><code>## Rows: 4,268
+## Columns: 12
+## $ bike_id       &lt;fct&gt; 26301, 26301, 26301, 26301, 26301, 26301, 26301, 26301, …
+## $ start_time    &lt;dttm&gt; 2018-02-26 19:11:03, 2018-02-27 07:52:49, 2018-02-27 12…
+## $ stop_time     &lt;dttm&gt; 2018-02-26 19:15:40, 2018-02-27 07:58:13, 2018-02-27 12…
+## $ start_station &lt;fct&gt; 3186, 3203, 3202, 3638, 3638, 3187, 3638, 3639, 3202, 36…
+## $ start_lat     &lt;dbl&gt; 40.71959, 40.72760, 40.72722, 40.72429, 40.72429, 40.721…
+## $ start_long    &lt;dbl&gt; -74.04312, -74.04425, -74.03376, -74.03548, -74.03548, -…
+## $ end_station   &lt;fct&gt; 3203, 3202, 3638, 3638, 3187, 3638, 3639, 3202, 3638, 32…
+## $ end_lat       &lt;dbl&gt; 40.72760, 40.72722, 40.72429, 40.72429, 40.72112, 40.724…
+## $ end_long      &lt;dbl&gt; -74.04425, -74.03376, -74.03548, -74.03548, -74.03805, -…
+## $ type          &lt;fct&gt; Subscriber, Subscriber, Subscriber, Subscriber, Subscrib…
+## $ birth_year    &lt;dbl&gt; 1986, 1979, 1963, 1984, 1980, 1980, 1989, 1962, 1992, 19…
+## $ gender        &lt;fct&gt; Male, Male, Male, Male, Male, Male, Male, Male, Male, Ma…</code></pre>
+<pre class="r"><code>skim(nyc_bikes_df)</code></pre>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">nyc_bikes_df</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4268</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">12</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">factor</td>
+<td align="left">5</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">POSIXct</td>
+<td align="left">2</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="10%" />
+<col width="14%" />
+<col width="8%" />
+<col width="9%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">bike_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">10</td>
+<td align="left">335: 647, 294: 571, 263: 553, 335: 546</td>
+</tr>
+<tr class="even">
+<td align="left">start_station</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">52</td>
+<td align="left">318: 434, 320: 278, 319: 250, 318: 221</td>
+</tr>
+<tr class="odd">
+<td align="left">end_station</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">55</td>
+<td align="left">318: 577, 318: 291, 320: 253, 319: 214</td>
+</tr>
+<tr class="even">
+<td align="left">type</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+<td align="left">Sub: 3953, Cus: 315</td>
+</tr>
+<tr class="odd">
+<td align="left">gender</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">3</td>
+<td align="left">Mal: 3069, Fem: 930, Unk: 269</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="14%" />
+<col width="10%" />
+<col width="14%" />
+<col width="8%" />
+<col width="6%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">start_lat</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40.72</td>
+<td align="right">0.01</td>
+<td align="right">40.71</td>
+<td align="right">40.72</td>
+<td align="right">40.72</td>
+<td align="right">40.73</td>
+<td align="right">40.75</td>
+<td align="left">▅▇▅▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">start_long</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">-74.05</td>
+<td align="right">0.01</td>
+<td align="right">-74.09</td>
+<td align="right">-74.05</td>
+<td align="right">-74.04</td>
+<td align="right">-74.04</td>
+<td align="right">-74.03</td>
+<td align="left">▁▁▂▇▆</td>
+</tr>
+<tr class="odd">
+<td align="left">end_lat</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40.72</td>
+<td align="right">0.01</td>
+<td align="right">40.70</td>
+<td align="right">40.72</td>
+<td align="right">40.72</td>
+<td align="right">40.73</td>
+<td align="right">40.76</td>
+<td align="left">▁▇▅▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">end_long</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">-74.05</td>
+<td align="right">0.01</td>
+<td align="right">-74.10</td>
+<td align="right">-74.05</td>
+<td align="right">-74.04</td>
+<td align="right">-74.04</td>
+<td align="right">-74.00</td>
+<td align="left">▁▂▇▅▁</td>
+</tr>
+<tr class="odd">
+<td align="left">birth_year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1980.48</td>
+<td align="right">10.29</td>
+<td align="right">1887.00</td>
+<td align="right">1973.00</td>
+<td align="right">1983.00</td>
+<td align="right">1988.00</td>
+<td align="right">1999.00</td>
+<td align="left">▁▁▁▃▇</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: POSIXct</strong></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="9%" />
+<col width="13%" />
+<col width="18%" />
+<col width="18%" />
+<col width="18%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">min</th>
+<th align="left">max</th>
+<th align="left">median</th>
+<th align="right">n_unique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">start_time</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">2018-01-01 21:19:01</td>
+<td align="left">2018-12-31 09:08:35</td>
+<td align="left">2018-07-24 10:47:26</td>
+<td align="right">4268</td>
+</tr>
+<tr class="even">
+<td align="left">stop_time</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">2018-01-01 21:20:41</td>
+<td align="left">2018-12-31 09:13:12</td>
+<td align="left">2018-07-24 10:51:51</td>
+<td align="right">4268</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># We have 4268 rows, 12 columns
+# We have no NAs 
+# Datetime columns: start_time, stop_time
+# birth_year is numeric</code></pre>
+<div id="the-pattern-of-bike-hires" class="section level2">
+<h2>The pattern of bike hires</h2>
+<p>over time (e.g. within a year, month, week, or day)?</p>
+</div>
+<div id="bike-rider-demographics" class="section level2">
+<h2>bike rider demographics</h2>
+<p>Do bike hire patterns differ between bike rider demographics?
+(e.g. gender, type of trip, age) Any other insights?</p>
+</div>
 </div>
 
 

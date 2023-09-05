@@ -15,4 +15,33 @@ author: "Lesley Duff"
 
 This report uses a sample dataset from NYC Citi Bike usage of 10 bikes throughout 2018. The data includes event data on each trip, including the trip's start and end times and locations. 
 
+```{r}
+library(skimr)
+library(tidyverse)
+library(tsibbledata)
+```
 
+```{r}
+# ?nyc_bikes comes from the tsibbledata package
+nyc_bikes_df <- nyc_bikes
+
+head(nyc_bikes_df)
+glimpse(nyc_bikes_df)
+
+skim(nyc_bikes_df)
+
+# We have 4268 rows, 12 columns
+# We have no NAs 
+# Datetime columns: start_time, stop_time
+# birth_year is numeric
+
+```
+
+## The pattern of bike hires
+
+over time (e.g. within a year, month, week, or day)?
+
+## bike rider demographics
+
+Do bike hire patterns differ between bike rider demographics? (e.g. gender, type of trip, age)
+Any other insights?
