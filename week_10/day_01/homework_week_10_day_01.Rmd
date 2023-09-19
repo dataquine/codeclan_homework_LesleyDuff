@@ -1,0 +1,61 @@
+---
+title: "Simple linear regression homework"
+output:
+  html_document:
+    df_print: paged
+---
+# Introduction
+The file project_management.csv contains data sampled from the recent work schedule of a small construction company. Column estimated_length contains the estimated length of a building job in days, while column actual_length contains the actual recorded length of the job in days.
+
+We are interested in determining the accuracy of the job estimations made by the company using simple linear regression, so we will eventually want to run a simple linear regression using actual_length as the dependent/response/outcome variable, and estimated_length as the independent/predictor/explanatory variable.
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+project <- read_csv("data/project_management.csv")
+```
+## Plot
+Plot the data, taking estimated_length as the independent variable and 
+actual_length as the dependent variable.
+```{r}
+project %>%
+  ggplot(aes(x = estimated_length, y = actual_length)) +
+  geom_point() +
+  labs(
+    x = "\nEstimated length (days)",
+    y = "Actual length (days)\n",
+    title = "Estimated vs. Actual Job Length"
+  )
+```
+## Correlation coefficient
+Calculate the correlation coefficient of estimated_length and actual_length and interpret the value you obtain.
+
+```{r}
+project %>%
+  summarise(correlation = cor(estimated_length, actual_length))
+```
+These variables are very strongly positively correlated.
+
+## Simple linear regression 
+Perform a simple linear regression using actual_length as the dependent variable, and estimated_length as the independent variable. Save the model object to a variable.
+
+y ~ x,
+y is the outcome variable, and x the single explanatory variable.
+
+* outcome/response/dependent: actual_length , y
+* explanatory/predictor/independent: estimated_length, x
+
+```{r}
+model_job_length_days <- lm(actual_length ~ estimated_length,
+  data = project
+)
+model_job_length_days
+```
+ENDS 
+
+## Interpret the regression coefficient 
+
+## Is the relationship statistically significant?
+
