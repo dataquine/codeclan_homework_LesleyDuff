@@ -1,0 +1,8 @@
+---
+title: "Features and elements of multiple regression"
+output:
+  html_document:
+    df_print: paged
+date: "`r format(Sys.Date())`"
+author: "Lesley Duff"
+---
