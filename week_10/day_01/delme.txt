@@ -1,0 +1,4 @@
+#actual_length = Dependent Variable: Ice Cream Sales, y
+#estimated_length = Independent Variable: Temperature, x
+#estimated_length, x
+# actual_length, y
