@@ -6,6 +6,18 @@ output:
 date: "`r format(Sys.Date())`"
 author: "Lesley Duff"
 ---
+# Glossary of Terms
+- *Regression*: the process of finding quantifiable relationships between "variables", i.e. saying that we can approximate a (continuous numeric) variable by a weighted combination of other variables
+- *Linear Regression*: a formula with additive weights of predictor variables
+- *Explanatory/predictor/independent variables*: the variables (columns, measurements of real-world phenomena) we use to try and estimate the thing we're interested in...
+- *Outcome/response/dependet variablE (singular)*: the thing we're trying to estimate
+- *Multiple (Linear) Regression*: finding a regression using more than one explanatory/predictor/independent variables
+
+===
+# Performing regression step-by-step
+## Familiarise ourselves with the data and how it relates to what we know about the real-world process
+
+=========
 # Multiple regression
 
 We have data for [California Housing Prices](https://www.kaggle.com/datasets/camnugent/california-housing-prices).
@@ -24,3 +36,38 @@ The data contains information from the 1990 California census and pertains to th
 * median_income
 * median_house_value
 * ocean_proximity
+
+```{r}
+library(GGally)
+library(tidyverse)
+```
+
+```{r}
+# Read clean data
+housing_prices <- read_csv("clean_data/housing_prices.csv")
+```
+## total_rooms of houses and total_bedrooms correlation?
+
+```{r}
+# We expect the total_rooms of houses to be strongly correlated with total_bedrooms. Use ggpairs() to investigate correlations between these two variables.
+
+
+ggpairs(housing_prices)
+
+
+
+
+
+
+# Check numerical correlations
+housing_prices %>%
+  summarise(correlation = cor(total_rooms, total_bedrooms))
+
+# 0.9307124	 = 	very strong positive correlation
+```
+
+
+```{r}
+ggpairs(). #?ggpairs
+```
+
