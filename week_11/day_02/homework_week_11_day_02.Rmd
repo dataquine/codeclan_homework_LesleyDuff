@@ -1,0 +1,29 @@
+---
+title: 'Decision trees'
+output:
+  html_document:
+    df_print: paged
+---
+In this homework we will create a decision tree to see which factors are useful in predicting whether or not a passenger on the titanic will survive.
+
+Run the code below before you begin:
+```{r}
+library(rpart)
+library(rpart.plot)
+library(tidyverse)
+
+library(tidyverse)
+titanic_set <- read_csv('data/titanic_decision_tree_data.csv')
+
+shuffle_index <- sample(1:nrow(titanic_set))
+
+# shuffle the data so class order isn't in order - need this for training/testing split later on 
+titanic_set <- titanic_set[shuffle_index, ]
+```
+```{r}
+titanic_set %>% 
+  # skimr::skim() %>% View ()
+glimpse() %>% 
+  str()
+```
+
