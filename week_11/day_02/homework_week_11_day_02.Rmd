@@ -13,17 +13,181 @@ library(rpart.plot)
 library(tidyverse)
 
 library(tidyverse)
-titanic_set <- read_csv('data/titanic_decision_tree_data.csv')
+titanic_set <- read_csv("data/titanic_decision_tree_data.csv")
 
 shuffle_index <- sample(1:nrow(titanic_set))
 
-# shuffle the data so class order isn't in order - need this for training/testing split later on 
+# shuffle the data so class order isn't in order - need this for training/testing split later on
 titanic_set <- titanic_set[shuffle_index, ]
 ```
 ```{r}
-titanic_set %>% 
+titanic_set %>%
   # skimr::skim() %>% View ()
-glimpse() %>% 
+  glimpse() %>%
   str()
 ```
+## Question 1
+Cleaning up the data is always the first step. 
+
+```{r}
+titanic_set %>%
+  count(survived)
+
+titanic_set %>%
+  count(sex)
+
+titanic_set %>%
+  count(survived)
+
+titanic_set %>%
+  count(pclass)
+
+titanic_set %>%
+  count(age)
+
+head(titanic_set)
+
+dim(titanic_set)
+titanic_clean <- titanic_set %>%
+  # Take only observations which have a survived flag (i.e. that aren’t missing)
+  filter(!is.na(survived)) %>%
+  # Drop the NA
+  filter(!is.na(age)) %>%
+  filter(!is.na(embarked)) %>%
+  filter(!is.na(fare)) %>%
+  # Turn your important variables into factors
+  # (sex, survived, pclass, embarkation)
+
+
+  mutate(
+    sex = factor(sex),
+    #  survived_flag =  factor(recode(survived, "0" = "No", "1" = "Yes")),
+    survived_flag = factor(survived, levels = c(0, 1), labels = c(
+      "Died", "Survived"
+    )),
+    # did they survive, 0 = No, 1 = Yes
+
+    class = factor(recode(pclass,
+      "1" = "1st (Upper)",
+      "2" = "2nd (Middle)",
+      "3" = "3rd (Lower)"
+    )),
+    # class : Ticket class, 1 = 1st (Upper class),
+    # 2 = 2nd (Middle Class), 3 = 3rd (Lower Class)
+
+    port_embarkation = factor(recode(embarked,
+      "C" = "Cherbourg",
+      "Q" = "Queenstown",
+      "S" = "Southampton"
+    )),
+
+    # port_embarkation: C = Cherbourg, Q = Queenstown, S = Southampton
+
+    # Create an age_status variable which groups individuals under (and
+    # including) 16 years of age into a category called “child” category
+    # and those over 16 into a category called “adult”.
+    age_status = if_else(age <= 16, "child", "adult")
+  ) %>%
+  select(
+    -...1, -passenger_id, -name, -ticket, -fare, -cabin,
+    -pclass, -survived, -embarked
+    # Remove columns turned into factors
+  )
+
+head(titanic_clean)
+# titanic_clean
+```
+## Question 2
+
+```{r}
+titanic_clean %>%
+  ggplot(aes(x = sex, fill = survived_flag)) +
+  geom_bar()
+
+titanic_clean %>%
+  ggplot(aes(x = age, fill = survived_flag)) +
+  geom_histogram()
+
+titanic_clean %>%
+  ggplot(aes(x = sib_sp, fill = survived_flag)) +
+  geom_histogram()
+
+titanic_clean %>%
+  ggplot(aes(x = parch, fill = survived_flag)) +
+  geom_histogram()
+
+titanic_clean %>%
+  ggplot(aes(x = class, fill = survived_flag)) +
+  geom_bar()
+
+titanic_clean %>%
+  ggplot(aes(x = port_embarkation, fill = survived_flag)) +
+  geom_bar()
+
+titanic_clean %>%
+  ggplot(aes(x = age_status, fill = survived_flag)) +
+  geom_bar()
+```
+Which variables do you think might be useful to predict whether or not people are going to die?
+
+class (3rd class), sex (male), port_embarkation (Southampton), age (20-40),  
+sib_sp (0), parch(0), age_status (adult)
+
+## Question 3
+
+Train/test split
+
+Predicting whether will survive, (survived_flag = "Yes")
+
+```{r}
+# get how many rows we have in total to work out the percentage
+n_data <- nrow(titanic_clean)
+
+# create a test sample index
+test_index <- sample(1:n_data, size = n_data * 0.2)
+
+# create test set
+titanic_test <- slice(titanic_clean, test_index)
+
+# create training set
+titanic_train <- slice(titanic_clean, -test_index)
+
+titanic_test %>%
+  janitor::tabyl(survived_flag)
+
+titanic_train %>%
+  janitor::tabyl(survived_flag)
+
+# 0.1 Yes 25 0.3521127, Yes 263 0.4102964, 0.4102964-0.3521127  =  0.0581837
+# 0.2 Yes 59 0.415493, Yes 229 0.4017544, 0.4017544-0.415493    = -0.0137386
+# 0.3 Yes 91 0.42723, Yes 197 0.3947896, 0.3947896-0.42723.     = -0.0324404
+# 0.4 Yes 121 0.4260563, Yes 167 0.3901869, 0.3901869-0.4260563 = -0.0358694
+# 0.5 Yes 154 0.4325843, Yes 134 0.3764045,0.3764045-0.4325843  = -0.0561798
+
+# 0.2 is smallest difference
+```
+
+## Question 4
+
+Create your decision tree to try and predict survival probability using an 
+appropriate method, and create a decision tree plot.
+
+```{r}
+titanic_fit <- rpart(
+  formula = survived_flag ~ .,
+  data = titanic_train,
+  method = "class"
+)
+
+rpart.plot(titanic_fit,
+  yesno = 2, # writes yes/no at all splits, 0 = no/yesno
+  type = 2, # where conditions lie = on top
+  fallen.leaves = TRUE, # leaves align at bottom (all in row)
+  faclen = 10, # how many characters of categorical written
+  digits = 2, # probability reported to x digits
+  split.border.col = 3 # changes border colour
+)
+```
+
+
 
