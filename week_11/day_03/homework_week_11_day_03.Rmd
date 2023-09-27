@@ -1,0 +1,80 @@
+---
+title: "Clustering"
+author: "Lesley Duff"
+date: "`r format(Sys.Date())`"
+output:
+  html_document:
+    df_print: paged
+---
+# Clustering
+
+## Task 1
+
+Do some exploratory analysis on the data. Comment on findings.
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+mall_customers <- read_csv("data/mall_customers.csv")
+
+mall_customers <- mall_customers %>% 
+  janitor::clean_names()
+```
+
+
+```{r}
+head(mall_customers)
+
+glimpse(mall_customers)
+
+skimr::skim(mall_customers) %>% View()
+
+```
+```{r}
+mall_customers %>% 
+  ggplot(aes(x = gender)) +
+  geom_bar()
+
+mall_customers %>% 
+  ggplot(aes(x = as.integer(age))) +
+  geom_histogram(binwidth = 5)
+
+age_stats <- mall_customers %>% 
+  summarise(min_age = min(age),
+         max_age = max(age),
+    mean_age = mean(age))
+age_stats
+```
+
+
+No missing data.
+Annual Income represents thousands of dollars
+Spending Score is from 1 to 100.
+
+From visualisation:
+Females outnumber males in terms of visitors to the mall.
+No children included Ages 18-70 with a mean of	38.85	
+
+
+
+Task 2
+
+We are interested in creating a marketing campaign to target customers based on their spending score and annual income. Select an appropriate value for k and perform k-means clustering to find if there are meaningful clusters in the data to target the customers.
+
+
+Task 3
+
+Visualise the clustering for your chosen value of k.
+
+
+Task 4
+
+Do you think the clustering seems a good fit for this data?
+
+
+Task 5
+
+Comment on the attributes of one or two of the clusters (maybe even give them an appropriate label if you like - similar to section 4.1 of the ‘Segmentation & clustering intro’ lesson where we saw labels such as “Super Fans” and “Tag-Alongs”).
