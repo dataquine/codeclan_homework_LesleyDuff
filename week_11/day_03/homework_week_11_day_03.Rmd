@@ -77,11 +77,35 @@ From visualisation:
 Females outnumber males in terms of visitors to the mall.
 No children included Ages 18-70 with a mean of	38.85	
 
+## Task 2
+
+We are interested in creating a marketing campaign to target customers based on their spending score and annual income. Select an appropriate value for k and perform k-means clustering to find if there are meaningful clusters in the data
+to target the customers.
+
+```{r}
+# spending score and annual income
+mall_customers_spending_income <- mall_customers  %>% 
+              select(spending = spending_score_1_100, 
+                     income = annual_income_k)
+
+head(mall_customers_spending_income)
+
+mall_customers_spending_income %>% 
+  ggplot(aes(x = spending, y = income)) +
+  geom_point()
+```
+Visually looks like roughly 5 clusters.
+```{r}
+# Scaling
+mall_customers_spending_income_scale <- mall_customers_spending_income %>%
+                mutate_if(is.numeric, scale)
+
+mall_customers_spending_income_scale
 
 
-Task 2
+```
 
-We are interested in creating a marketing campaign to target customers based on their spending score and annual income. Select an appropriate value for k and perform k-means clustering to find if there are meaningful clusters in the data to target the customers.
+
 
 
 Task 3
