@@ -13,6 +13,8 @@ output:
 Do some exploratory analysis on the data. Comment on findings.
 
 ```{r}
+library(broom)
+library(factoextra)
 library(tidyverse)
 ```
 
@@ -85,6 +87,8 @@ to target the customers.
 ```{r}
 # spending score and annual income
 mall_customers_spending_income <- mall_customers  %>% 
+    column_to_rownames("customer_id") %>%  # for plotting
+
               select(spending = spending_score_1_100, 
                      income = annual_income_k)
 
@@ -104,20 +108,90 @@ mall_customers_spending_income_scale
 
 
 ```
+CHoose k
+
+```{r}
+
+# Set min & max number of clusters want to look at 
+max_k <- 20 
+
+k_clusters <- tibble(k = 1:max_k) %>%
+  mutate(
+    kclust = map(k, ~ kmeans(mall_customers_spending_income_scale, 
+                             .x, nstart = 25)), 
+    tidied = map(kclust, tidy),
+    glanced = map(kclust, glance),
+    augmented = map(kclust, augment, mall_customers_spending_income)
+  )
+
+k_clusters
 
 
+clusterings <- k_clusters %>%
+  unnest(glanced)
+
+#clusterings
+
+ggplot(clusterings, aes(x=k, y=tot.withinss)) +
+  geom_point() +
+    geom_line() +
+    scale_x_continuous(breaks = seq(1, 20, by = 1))
+```
+
+Suggest 3 check 
+```{r}
+fviz_nbclust(mall_customers_spending_income_scale, 
+             kmeans, 
+             method = "wss", 
+             nstart = 25)
+
+fviz_nbclust(mall_customers_spending_income_scale, 
+             kmeans, 
+             method = "silhouette", 
+             nstart = 25)
+
+fviz_nbclust(mall_customers_spending_income_scale, 
+             kmeans, 
+             method = "gap_stat", 
+             nstart = 25, 
+             k.max = 20)
+```
+
+I'm choosing k=5
 
 
 Task 3
 
 Visualise the clustering for your chosen value of k.
 
-
-Task 4
+```{r}
+ clusterings %>% 
+  unnest(cols = c(augmented)) %>%
+  filter(k == 5) %>%
+   ggplot(aes(x = spending, y = income, colour = .cluster)) +
+  geom_point(aes(color = .cluster))
+```
+## Task 4
 
 Do you think the clustering seems a good fit for this data?
 
+Yes, clear separation of clusters.
 
-Task 5
+## Task 5
 
-Comment on the attributes of one or two of the clusters (maybe even give them an appropriate label if you like - similar to section 4.1 of the ‘Segmentation & clustering intro’ lesson where we saw labels such as “Super Fans” and “Tag-Alongs”).
+Comment on the attributes of one or two of the clusters (maybe even give them an appropriate label if you like - similar to section 4.1 of the ‘
+Segmentation & clustering intro’ lesson where we saw labels such as 
+“Super Fans” and “Tag-Alongs”).
+I would need a better understanding of spending score. Need to go back to 
+customer for clarification. I'm interpreting it as 
+spending at this mall - higher meaning they purchase more at this particular mall.
+
+3- Green - High income, Low spending
+These could be incentivised to spend more as they can afford it.
+
+2- olive - High income, High spending
+1- red - Medium income, Medium spending
+5- purple - Low income, Low spending
+Less opportunities to increase sales
+
+4 - blue - Low income, High spending
