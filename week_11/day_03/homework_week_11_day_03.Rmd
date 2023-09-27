@@ -30,23 +30,42 @@ head(mall_customers)
 
 glimpse(mall_customers)
 
-skimr::skim(mall_customers) %>% View()
+#skimr::skim(mall_customers) %>% View()
 
 ```
 ```{r}
 mall_customers %>% 
   ggplot(aes(x = gender)) +
-  geom_bar()
+  geom_bar(colour = "white", fill="steelblue")
 
 mall_customers %>% 
   ggplot(aes(x = as.integer(age))) +
-  geom_histogram(binwidth = 5)
+  geom_histogram(binwidth = 5, colour = "white", fill="steelblue")
 
 age_stats <- mall_customers %>% 
   summarise(min_age = min(age),
          max_age = max(age),
-    mean_age = mean(age))
+    mean_age = mean(age),
+    annual_income_k = median(annual_income_k))
 age_stats
+
+mall_customers %>% 
+  ggplot(aes(x = as.integer(annual_income_k))) +
+  geom_histogram(binwidth = 5, colour = "white", fill="steelblue")+
+  labs(
+    x = "\nAnnual Income (£1000)",
+    y = "Count\n"
+  )
+
+mall_customers %>% 
+  ggplot(aes(x = spending_score_1_100)) +
+  geom_histogram(binwidth = 5, colour = "white", fill="steelblue")+
+  labs(
+    x = "\nSpending Score (1-100)",
+    y = "Count\n"
+  )
+
+
 ```
 
 
