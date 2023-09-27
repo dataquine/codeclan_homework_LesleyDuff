@@ -168,8 +168,9 @@ Visualise the clustering for your chosen value of k.
  clusterings %>% 
   unnest(cols = c(augmented)) %>%
   filter(k == 5) %>%
-   ggplot(aes(x = spending, y = income, colour = .cluster)) +
-  geom_point(aes(color = .cluster))
+   ggplot(aes(x = spending, y = income, colour = .cluster, label = row.names(.))) +
+  geom_point(aes(color = .cluster))+
+  geom_text(hjust = -0, vjust = -1, size = 3)
 ```
 ## Task 4
 
