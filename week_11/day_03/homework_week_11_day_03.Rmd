@@ -171,6 +171,19 @@ Visualise the clustering for your chosen value of k.
    ggplot(aes(x = spending, y = income, colour = .cluster, label = row.names(.))) +
   geom_point(aes(color = .cluster))+
   geom_text(hjust = -0, vjust = -1, size = 3)
+
+# David
+#clusterings %>% 
+#  filter(k == 5) %>% 
+#  unnest(augmented) %>% 
+#  ggplot(aes(annual_income_k, spending_score_1_100, colour = .cluster)) +
+#  geom_point() +
+#  stat_ellipse(
+#    aes(fill = .cluster),
+#    geom = "polygon", alpha = 0.4, level = 0.95, linetype = 2,
+#    show.legend = F
+#  )
+  # geom_point(data = centroids, aes(colour = cluster), size = 20, alpha = 0.25, show.legend = FALSE)
 ```
 ## Task 4
 
