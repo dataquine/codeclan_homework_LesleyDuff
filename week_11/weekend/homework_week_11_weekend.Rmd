@@ -1,0 +1,60 @@
+---
+title: "Text Mining Homework"
+output:
+  html_document:
+    df_print: paged
+author: "Lesley Duff"
+date: "`r format(Sys.Date())`"
+---
+# Text Mining Homework
+
+```{r}
+library(janeaustenr)
+library(tidytext)
+library(tidyverse)
+```
+
+Using the dataset austen_books() from the package :
+
+## 1. common words
+Find the most common words in both Mansfield Park and Sense & Sensibility.
+
+```{r}
+#?janeaustenr
+# https://github.com/juliasilge/janeaustenr
+# mansfieldpark sensesensibility
+#?austen_books
+
+austen_books <- austen_books()
+head(austen_books)
+# columns text and book
+
+austen_books() %>% 
+    group_by(book) %>%
+    summarise(total_lines = n())
+
+mansfieldpark_book <- austen_books %>% 
+  filter(book == "Mansfield Park")
+
+mansfieldpark_common_words <- mansfieldpark_book %>% 
+  unnest_tokens(word, text) %>% 
+  count(word, book, sort = TRUE)
+mansfieldpark_common_words
+
+sensesensibility_book <- austen_books %>% 
+  filter(book == "Sense & Sensibility")
+
+sensesensibility_common_words <- sensesensibility_book %>% 
+  unnest_tokens(word, text) %>% 
+  count(word, book, sort = TRUE)
+sensesensibility_common_words
+
+```
+
+
+## 2. common words no stop words
+Find the most common words in both Mansfield Park and Sense & Sensibility, not including stop words.
+
+## 3. sentiment words
+Find the most common sentiment words in both Mansfield Park and Sense & Sensibility.
+
