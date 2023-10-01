@@ -54,7 +54,29 @@ sensesensibility_common_words
 
 ## 2. common words no stop words
 Find the most common words in both Mansfield Park and Sense & Sensibility, not including stop words.
+```{r}
+mansfieldpark_common_words_nostop <- mansfieldpark_common_words %>%
+  anti_join(stop_words) 
+mansfieldpark_common_words_nostop
+
+sensesensibility_common_words_nostop <- sensesensibility_common_words %>% 
+    anti_join(stop_words) 
+sensesensibility_common_words_nostop
+```
+
 
 ## 3. sentiment words
 Find the most common sentiment words in both Mansfield Park and Sense & Sensibility.
+
+```{r}
+mansfieldpark_sentiment_words <- mansfieldpark_common_words_nostop %>% 
+   inner_join(get_sentiments("bing"))
+mansfieldpark_sentiment_words
+
+sensesensibility_common_words<- sensesensibility_common_words_nostop %>% 
+   inner_join(get_sentiments("bing"))
+sensesensibility_common_words
+```
+
+
 
